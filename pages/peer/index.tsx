@@ -45,8 +45,8 @@ const PeerPage: FC<PeerProps> = () => {
 
     if (!peer) return console.log("no peer");
 
-    peer.connect(userName).on("open", () => {
-      console.log("open");
+    peer.connect(userName).on("data", (data) => {
+      console.log("data", data);
     });
   };
 
