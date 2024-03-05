@@ -67,7 +67,7 @@ const LoginForm: FC<LoginFormProps> = () => {
       const res = await dispatch(loginUser(values));
       if (!(res as any).error) {
         addToast("Login Successfully", { appearance: "success" });
-        const getStatus = await dispatch(getAuth(null));
+        const getStatus = await dispatch(getAuth());
 
         /*  const status = await useApi.status();
         updateUser(status); */

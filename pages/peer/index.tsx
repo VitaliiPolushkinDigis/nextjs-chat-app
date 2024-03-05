@@ -68,13 +68,13 @@ const PeerPage: FC<PeerProps> = () => {
           remoteVideoRef.current.srcObject = stream;
           var playPromise = await remoteVideoRef.current.play();
           if (playPromise !== undefined) {
-            playPromise
-              .then((_) => {
+            (playPromise as any)
+              .then((_: any) => {
                 // Automatic playback started!
                 // Show playing UI.
                 console.log(_);
               })
-              .catch((error) => {
+              .catch((error: any) => {
                 // Auto-play was prevented
                 // Show paused UI.
                 console.log(error);
