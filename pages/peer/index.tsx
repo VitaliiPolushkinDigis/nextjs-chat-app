@@ -66,6 +66,14 @@ const PeerPage: FC<PeerProps> = () => {
         console.log("receiving remote stream");
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = stream;
+          console.log(
+            "remoteVideoRef.current.readyState",
+            remoteVideoRef.current.readyState
+          );
+          if (remoteVideoRef.current.readyState !== 0) {
+            console.log("now not 0");
+          }
+
           var playPromise = await remoteVideoRef.current.play();
           if (playPromise !== undefined) {
             (playPromise as any)
