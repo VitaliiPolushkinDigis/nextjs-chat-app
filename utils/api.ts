@@ -9,12 +9,12 @@ import {
 } from "./types";
 
 export const API_URL =
-  "https://chat-nestjs-92c46b4f7e43.herokuapp.com"; /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
+  "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api"; /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
 const config: AxiosRequestConfig = {
   withCredentials: true,
   headers: {
     "Access-Control-Allow-Origin":
-      "https://chat-nestjs-92c46b4f7e43.herokuapp.com",
+      "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api",
     "Content-Type": "application/json",
   },
 };
