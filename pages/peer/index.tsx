@@ -80,12 +80,13 @@ const PeerPage: FC<PeerProps> = () => {
               .then((_: any) => {
                 // Automatic playback started!
                 // Show playing UI.
-                console.log(_);
+                console.log("yosdfosdf");
+                remoteVideoRef?.current?.pause();
               })
               .catch((error: any) => {
                 // Auto-play was prevented
                 // Show paused UI.
-                console.log(error);
+                console.log("my error", error);
               });
           }
         }
@@ -123,19 +124,32 @@ const PeerPage: FC<PeerProps> = () => {
       localVideoRef.current.muted = true;
       localVideoRef.current.play();
     }
-    setTimeout(() => {
-      const call = peer.call(userName, mediaStream);
-      console.log(call.peerConnection.getSenders());
-      setConnectedCall(call);
 
-      call.on("stream", (stream) => {
-        setRemoteStream(stream);
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = stream;
-          remoteVideoRef.current.play();
+    const call = peer.call(userName, mediaStream);
+    console.log(call.peerConnection.getSenders());
+    setConnectedCall(call);
+
+    call.on("stream", async (stream) => {
+      setRemoteStream(stream);
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = stream;
+        var playPromise = await remoteVideoRef.current.play();
+        if (playPromise !== undefined) {
+          (playPromise as any)
+            .then((_: any) => {
+              // Automatic playback started!
+              // Show playing UI.
+              console.log("yosdfosdf");
+              remoteVideoRef?.current?.pause();
+            })
+            .catch((error: any) => {
+              // Auto-play was prevented
+              // Show paused UI.
+              console.log("my error", error);
+            });
         }
-      });
-    }, 1000);
+      }
+    });
   };
 
   const shareScreen = async () => {
