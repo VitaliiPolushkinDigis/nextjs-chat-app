@@ -327,3 +327,4 @@ export const TextFieldComponent = forwardRef<HTMLInputElement, TextFieldProps>(
     );
   }
 );
+export default TextFieldComponent;
