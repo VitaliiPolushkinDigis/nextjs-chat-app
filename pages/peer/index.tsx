@@ -123,17 +123,19 @@ const PeerPage: FC<PeerProps> = () => {
       localVideoRef.current.muted = true;
       localVideoRef.current.play();
     }
-    const call = peer.call(userName, mediaStream);
-    console.log(call.peerConnection.getSenders());
-    setConnectedCall(call);
+    setTimeout(() => {
+      const call = peer.call(userName, mediaStream);
+      console.log(call.peerConnection.getSenders());
+      setConnectedCall(call);
 
-    call.on("stream", (stream) => {
-      setRemoteStream(stream);
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = stream;
-        remoteVideoRef.current.play();
-      }
-    });
+      call.on("stream", (stream) => {
+        setRemoteStream(stream);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = stream;
+          remoteVideoRef.current.play();
+        }
+      });
+    }, 1000);
   };
 
   const shareScreen = async () => {
