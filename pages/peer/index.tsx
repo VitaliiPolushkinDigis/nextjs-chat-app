@@ -89,11 +89,11 @@ const PeerPage: FC<PeerProps> = () => {
     });
 
     peer.on("open", (id) => {
-      console.log("peer open", peer, id);
+      console.log("peer open in useEffect", peer, id);
     });
 
     peer.on("connection", (data) => {
-      console.log("connection", data);
+      console.log("connection established", data);
     });
   }, [peer]);
 
@@ -103,6 +103,11 @@ const PeerPage: FC<PeerProps> = () => {
     console.log("connect click");
 
     const connection = peer.connect(userName);
+    console.log(connection.open);
+
+    peer.on("open", (id) => {
+      console.log("peer open in connect function", peer, id);
+    });
     const mediaStream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
