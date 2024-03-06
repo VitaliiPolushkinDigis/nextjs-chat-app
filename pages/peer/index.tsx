@@ -66,27 +66,18 @@ const PeerPage: FC<PeerProps> = () => {
         console.log("receiving remote stream");
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = stream;
-          console.log(
-            "remoteVideoRef.current.readyState",
-            remoteVideoRef.current.readyState
-          );
-          if (remoteVideoRef.current.readyState !== 0) {
-            console.log("now not 0");
-          }
-
           var playPromise = await remoteVideoRef.current.play();
           if (playPromise !== undefined) {
             (playPromise as any)
               .then((_: any) => {
                 // Automatic playback started!
                 // Show playing UI.
-                console.log("yosdfosdf");
-                remoteVideoRef?.current?.pause();
+                console.log(_);
               })
               .catch((error: any) => {
                 // Auto-play was prevented
                 // Show paused UI.
-                console.log("my error", error);
+                console.log(error);
               });
           }
         }
@@ -124,30 +115,15 @@ const PeerPage: FC<PeerProps> = () => {
       localVideoRef.current.muted = true;
       localVideoRef.current.play();
     }
-
     const call = peer.call(userName, mediaStream);
     console.log(call.peerConnection.getSenders());
     setConnectedCall(call);
 
-    call.on("stream", async (stream) => {
+    call.on("stream", (stream) => {
       setRemoteStream(stream);
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = stream;
-        var playPromise = await remoteVideoRef.current.play();
-        if (playPromise !== undefined) {
-          (playPromise as any)
-            .then((_: any) => {
-              // Automatic playback started!
-              // Show playing UI.
-              console.log("yosdfosdf");
-              remoteVideoRef?.current?.pause();
-            })
-            .catch((error: any) => {
-              // Auto-play was prevented
-              // Show paused UI.
-              console.log("my error", error);
-            });
-        }
+        remoteVideoRef.current.play();
       }
     });
   };
