@@ -8,7 +8,13 @@ import { v4 as uuid } from "uuid";
 import io from "socket.io-client";
 import VideoCard from "../components/cards/Video/Videos";
 
-const initializePeerInstance = ({ initiator, stream }) => {
+const initializePeerInstance = ({
+  initiator,
+  stream,
+}: {
+  initiator: boolean;
+  stream: MediaStream;
+}) => {
   if (typeof window !== "undefined") {
     const Peer = require("simple-peer");
     return new Peer({
@@ -101,14 +107,14 @@ const PeerPage: FC<PeerProps> = () => {
         }
       });
 
-    socket.current.on("yourID", (id) => {
+    socket.current.on("yourID", (id: string) => {
       setYourID(id);
     });
-    socket.current.on("allUsers", (users) => {
+    socket.current.on("allUsers", (users: any) => {
       setUsers(users);
     });
 
-    socket.current.on("hey", (data) => {
+    socket.current.on("hey", (data: any) => {
       setReceivingCall(true);
       setCaller(data.from);
       setCallerSignal(data.signal);
@@ -116,9 +122,9 @@ const PeerPage: FC<PeerProps> = () => {
   }, []);
 
   function callPeer(id: string) {
-    const peer = initializePeerInstance({ initiator: true, stream });
+    const peer = initializePeerInstance({ initiator: true, stream: stream! });
 
-    peer.on("signal", (data) => {
+    peer.on("signal", (data: any) => {
       socket.current.emit("callUser", {
         userToCall: id,
         signalData: data,
@@ -126,13 +132,13 @@ const PeerPage: FC<PeerProps> = () => {
       });
     });
 
-    peer.on("stream", (stream) => {
+    peer.on("stream", (stream: any) => {
       if (partnerVideo.current) {
         partnerVideo.current.srcObject = stream;
       }
     });
 
-    socket.current.on("callAccepted", (signal) => {
+    socket.current.on("callAccepted", (signal: any) => {
       setCallAccepted(true);
       peer.signal(signal);
     });
@@ -140,12 +146,12 @@ const PeerPage: FC<PeerProps> = () => {
 
   function acceptCall() {
     setCallAccepted(true);
-    const peer = initializePeerInstance({ initiator: false, stream });
-    peer.on("signal", (data) => {
+    const peer = initializePeerInstance({ initiator: false, stream: stream! });
+    peer.on("signal", (data: any) => {
       socket.current.emit("acceptCall", { signal: data, to: caller });
     });
 
-    peer.on("stream", (stream) => {
+    peer.on("stream", (stream: any) => {
       if (partnerVideo.current) partnerVideo.current.srcObject = stream;
     });
 
