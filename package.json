@@ -20,6 +20,7 @@
     "@mui/styles": "^5.15.3",
     "@reduxjs/toolkit": "^2.0.1",
     "@types/d3": "^7.4.3",
+    "@types/simple-peer": "^9.11.8",
     "axios": "^1.6.5",
     "clsx": "^2.1.0",
     "d3": "^7.8.5",

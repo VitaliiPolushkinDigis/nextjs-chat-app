@@ -9,7 +9,7 @@ export function useSocket() {
   useEffect(() => {
     (async function initSocket() {
       const inst = io(
-        /*  "http://localhost:3001" */ "https://chat-nestjs-92c46b4f7e43.herokuapp.com",
+        "http://localhost:3001" /* "https://chat-nestjs-92c46b4f7e43.herokuapp.com" */,
         {
           reconnectionAttempts: 3,
           withCredentials: true,
