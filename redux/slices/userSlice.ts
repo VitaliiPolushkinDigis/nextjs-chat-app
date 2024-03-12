@@ -31,9 +31,9 @@ export const loginUser = createAsyncThunk(
     return response.data;
   }
 );
-export const getAuth = createAsyncThunk(
+export const getAuth = createAsyncThunk<User, string | undefined>(
   "user/getAuth",
-  async (cookies?: any) => {
+  async (cookies) => {
     const response = await getAuthUser(cookies);
 
     return response.data;
