@@ -68,7 +68,7 @@ const LoginForm: FC<LoginFormProps> = () => {
       if (!(res as any).error) {
         addToast("Login Successfully", { appearance: "success" });
         const getStatus = await dispatch(getAuth());
-
+        router.push("/peer");
         /*  const status = await useApi.status();
         updateUser(status); */
         /*  

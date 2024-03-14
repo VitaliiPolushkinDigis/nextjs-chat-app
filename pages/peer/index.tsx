@@ -7,6 +7,7 @@ import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import io from "socket.io-client";
 import VideoCard from "../components/cards/Video/Videos";
+import Page from "../components/layouts/page/Page";
 
 const initializePeerInstance = ({
   initiator,
@@ -214,54 +215,56 @@ const PeerPage: FC<PeerProps> = () => {
 
   return (
     <Box component={"section"} minHeight={"100vh"}>
-      user: {user?.firstName}
-      {/* peer: {peer && peer.id} */}
-      your ID: {yourID}
-      <div>
-        MY ref video:{" "}
-        <video
-          playsInline
-          muted
-          width={400}
-          height={400}
-          ref={userVideo}
-          autoPlay
-        />
-      </div>
-      <div>
-        REMOTE:{" "}
-        <video
-          playsInline
-          muted
-          width={400}
-          height={400}
-          ref={partnerVideo}
-          autoPlay
-        />
-      </div>
-      {Object.keys(users).map((key) => {
-        if (key === yourID) {
-          return null;
-        }
-        return (
-          <button key={key} onClick={() => callPeer(key)}>
-            Call {key}
-          </button>
-        );
-      })}
-      <div> {incomingCall}</div>
-      <Card>
-        <form onSubmit={connect}>
-          <label htmlFor="userName">set name</label>
-          <input
-            type="text"
-            id="userName"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
+      <Page>
+        user: {user?.firstName}
+        {/* peer: {peer && peer.id} */}
+        your ID: {yourID}
+        <div>
+          My video:{" "}
+          <video
+            playsInline
+            muted
+            width={400}
+            height={400}
+            ref={userVideo}
+            autoPlay
           />
-          <Button type="submit">Connect</Button>
-        </form>
-      </Card>
+        </div>
+        <div>
+          REMOTE:{" "}
+          <video
+            playsInline
+            muted
+            width={400}
+            height={400}
+            ref={partnerVideo}
+            autoPlay
+          />
+        </div>
+        {Object.keys(users).map((key) => {
+          if (key === yourID) {
+            return null;
+          }
+          return (
+            <button key={key} onClick={() => callPeer(key)}>
+              Call {key}
+            </button>
+          );
+        })}
+        <div> {incomingCall}</div>
+        <Card>
+          <form onSubmit={connect}>
+            <label htmlFor="userName">set name</label>
+            <input
+              type="text"
+              id="userName"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+            <Button type="submit">Connect</Button>
+          </form>
+        </Card>
+      </Page>
     </Box>
   );
 };
