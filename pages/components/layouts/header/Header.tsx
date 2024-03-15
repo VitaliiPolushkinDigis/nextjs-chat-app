@@ -35,7 +35,7 @@ const Header: FC<HeaderProps> = (props) => {
           Shop
         </Link>
         <Link style={{ marginRight: "50px" }} href="/peer">
-          WebRTC
+          Video Chat
         </Link>
         <Box>{props?.firstName}</Box>
         <Box>
