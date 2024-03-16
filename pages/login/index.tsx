@@ -15,30 +15,13 @@ import { HttpStatusCode } from "axios";
 import { useAppDispatch, useTypedSelector } from "@/redux";
 import { getAuth, loginUser } from "@/redux/slices/userSlice";
 
-/* export const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    background: "#eee",
-    borderRadius: "15px",
-    padding: "45px 30px",
-    height: "100%",
-    position: "relative",
-  },
-  registerForm: {
-    "& > div": {
-      marginBottom: "16px",
-    },
-  },
-})); */
-
 interface LoginFormProps {}
 
 const LoginForm: FC<LoginFormProps> = () => {
   const { addToast } = useToasts();
   const dispatch = useAppDispatch();
-  /*   const { user, updateUser } = useContext(AuthContext); */
-  /* const styles = useStyles(); */
   const { user, loading, error } = useTypedSelector((state) => state.user);
-  console.log(user, loading, error);
+  const { updateUser } = useContext(AuthContext);
 
   const router = useRouter();
   const formik = useFormik({
@@ -68,9 +51,10 @@ const LoginForm: FC<LoginFormProps> = () => {
       if (!(res as any).error) {
         addToast("Login Successfully", { appearance: "success" });
         const getStatus = await dispatch(getAuth());
-        router.push("/peer");
-        /*  const status = await useApi.status();
-        updateUser(status); */
+        const status = await useApi.status();
+        updateUser(status);
+        router.push(`/profile/${getStatus.payload.id}`);
+
         /*  
       router.push("/conversations"); */
       } else {

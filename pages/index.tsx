@@ -6,7 +6,6 @@ import Page from "./components/layouts/page/Page";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home(props: any) {
-  console.log(props);
   return (
     <>
       <Head>
@@ -19,6 +18,7 @@ export default function Home(props: any) {
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
         />
       </Head>
+
       <Page {...props}>
         <main className={`${styles.main} ${inter.className}`}>
           <div className={styles.description}>
@@ -121,32 +121,33 @@ export default function Home(props: any) {
 }
 
 export async function getServerSideProps(ctx) {
-  const res = await fetch("http://localhost:3001/api/auth/status", {
-    method: "GET",
-    headers: {
-      "Access-Control-Allow-Origin": "http://localhost:3001",
-      "Content-Type": "application/json",
-      Cookie: ctx.req.headers.cookie,
-    },
-    credentials: "include",
-  });
-
-  // Assuming you have an API route for status
-  const data = await res.json();
-
-  return {
-    props: data,
-  };
+  //try catch
   try {
+    const res = await fetch("http://localhost:3001/api/auth/status", {
+      method: "GET",
+      headers: {
+        "Access-Control-Allow-Origin": "http://localhost:3001",
+        "Content-Type": "application/json",
+        Cookie: ctx.req.headers.cookie,
+      },
+      credentials: "include",
+    });
+
+    // Assuming you have an API route for status
+    const data = await res.json();
+
+    return {
+      props: data,
+    };
   } catch (error) {
     console.error(error);
 
     // Handle errors, maybe redirect to an error page
-    /*  return {
+    return {
       redirect: {
         destination: "/error",
         permanent: false,
       },
-    }; */
+    };
   }
 }

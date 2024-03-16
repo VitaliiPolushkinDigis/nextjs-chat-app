@@ -1,8 +1,12 @@
 export type ConversationType = {
   id: number;
-  creator: User;
-  recipient: User;
+  creator: UserWithoutPassword;
+  recipient: UserWithoutPassword;
   createdAt: Date | string;
+};
+export type CreateConversationParams = {
+  recipientId: number;
+  message: string;
 };
 
 export type ConversationMessage = {
@@ -10,22 +14,37 @@ export type ConversationMessage = {
   messages: MessageType[];
 };
 
-export type CreateUserParams = {
+/* export type CreateUserParams = {
   email: string;
   firstName: string;
   lastName: string;
   password: string;
-};
+}; */
 export type UserCredentialsParams = {
   email: string;
   password: string;
 };
+
 export type User = {
-  id: number;
+  id: number | string;
   email: string;
   firstName: string;
   lastName: string;
+  password: string;
+  profileId: number;
+  sex?: "male" | "female";
 };
+
+type ExcludeField<T, K extends keyof T> = {
+  [P in keyof T as P extends K ? never : P]: T[P];
+};
+
+export type UserWithoutPassword = ExcludeField<User, "password">;
+
+type OmitFields<T, K extends keyof T> = Required<Pick<T, Exclude<keyof T, K>>> &
+  Partial<Pick<T, K>>;
+
+export type CreateUserParams = OmitFields<User, "id" | "profileId">;
 
 export type MessageType = {
   id: number;
@@ -49,4 +68,8 @@ export type MessageEventPayload = {
 export type CreateMessageParams = {
   content: string;
   conversationId: number;
+};
+export type UpdateMessageParams = {
+  content: string;
+  messageId: number;
 };

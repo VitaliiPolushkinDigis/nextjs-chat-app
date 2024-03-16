@@ -7,6 +7,7 @@ import {
   User,
   UserCredentialsParams,
 } from "./types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const API_URL =
   "http://localhost:3001/api"; /* "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api" */
@@ -74,3 +75,60 @@ const mock = {
 };
 
 export default mock;
+
+export const postsApi = createApi({
+  reducerPath: "postsApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${API_URL}`,
+    prepareHeaders(headers) {
+      return headers;
+    },
+    credentials: "include",
+  }),
+  tagTypes: ["Posts"],
+  endpoints: (builder) => ({
+    getProfilePosts: builder.query<any[], number>({
+      query: (id: number) => `posts/profile/${id}`,
+      providesTags: ["Posts"],
+    }),
+    createPost: builder.mutation<{ title: string }, any>({
+      query: (data: any) => ({
+        url: `posts`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Posts"],
+    }),
+  }),
+});
+
+export const profilesApi = createApi({
+  reducerPath: "profilesApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${API_URL}`,
+    prepareHeaders(headers) {
+      return headers;
+    },
+    credentials: "include",
+  }),
+  endpoints: (builder) => ({
+    getProfiles: builder.query<any, any>({
+      query: () => `profiles`,
+    }),
+    getProfile: builder.query<any, any>({
+      query: (profileId: number) => `profiles/${profileId}`,
+    }),
+  }),
+});
+
+export const {
+  useGetProfilesQuery,
+  useGetProfileQuery,
+  useLazyGetProfileQuery,
+} = profilesApi;
+
+export const {
+  useGetProfilePostsQuery,
+  useCreatePostMutation,
+  useLazyGetProfilePostsQuery,
+} = postsApi;

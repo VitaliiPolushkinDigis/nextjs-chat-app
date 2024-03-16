@@ -1,3 +1,4 @@
+import { User } from "@/utils/types";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -6,6 +7,7 @@ import { FC } from "react";
 interface HeaderProps {
   id?: string;
   firstName?: string;
+  user?: User;
 }
 
 const Header: FC<HeaderProps> = (props) => {
@@ -14,6 +16,8 @@ const Header: FC<HeaderProps> = (props) => {
     router.push("/login");
   };
 
+  console.log("props", props);
+
   return (
     <Box
       style={{
@@ -21,13 +25,20 @@ const Header: FC<HeaderProps> = (props) => {
         alignItems: "center",
         justifyContent: "space-between",
         padding: "0 20px",
-        backgroundImage:
-          "linear-gradient( 89.7deg,rgba(255,255,255,0.7) 1.1%, rgba(223,0,80,1) 3.7%, rgba(29,255,255,1) 61.5%, rgba(5,17,255,1) 76.4%, rgba(202,0,253,1) 92.4%, rgba(255,255,255,1) 100.2% )",
+        position: "fixed",
+        width: "100vw",
+        zIndex: 10,
       }}
     >
       <Link href="/">ChatApp</Link>
 
       <Box style={{ display: "flex", alignItems: "center" }}>
+        <Link
+          style={{ marginRight: "50px" }}
+          href={`/profile/${props.user?.id || props?.id}`}
+        >
+          Profile
+        </Link>
         <Link style={{ marginRight: "50px" }} href="/conversations">
           Conversations
         </Link>

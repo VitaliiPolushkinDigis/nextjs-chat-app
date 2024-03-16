@@ -23,7 +23,6 @@ const Page: FC<PageProps> = ({
       background={background}
       className={classes.root}
     >
-      <Header {...rest} />
       {children}
     </Root>
   );

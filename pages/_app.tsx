@@ -6,10 +6,12 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { AppProps } from "next/app";
 import { ToastProvider } from "react-toast-notifications";
 import { AuthContext } from "@/utils/context/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "@/utils/types";
 import { Provider } from "react-redux";
 import store, { wrapper } from "@/redux";
+import { useApi } from "@/utils/api";
+import Header from "./components/layouts/header/Header";
 
 export const theme = createTheme({
   palette: {
@@ -22,6 +24,15 @@ export const theme = createTheme({
 export default function App({ Component, ...rest }: AppProps) {
   const { store } = wrapper.useWrappedStore(rest);
   const [user, updateUser] = useState<User>();
+
+  useEffect(() => {
+    useApi.status().then((d) => {
+      updateUser(d);
+    });
+  }, []);
+
+  console.log("userapp", user);
+
   return (
     <Provider store={store}>
       <AppCacheProvider {...rest.pageProps}>
@@ -31,6 +42,7 @@ export default function App({ Component, ...rest }: AppProps) {
           >
             <ToastProvider autoDismiss autoDismissTimeout={3500}>
               <CssBaseline />
+              <Header {...(rest.pageProps, user)} />
               <Component {...rest.pageProps} />
             </ToastProvider>
           </AuthContext.Provider>
