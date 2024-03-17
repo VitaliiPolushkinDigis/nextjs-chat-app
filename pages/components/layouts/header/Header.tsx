@@ -3,20 +3,20 @@ import { Box, Button } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
+import { useStyles } from "./Header.styles";
 
 interface HeaderProps {
-  id?: string;
+  id?: number;
   firstName?: string;
   user?: User;
 }
 
 const Header: FC<HeaderProps> = (props) => {
   const router = useRouter();
+  const style = useStyles();
   const handleLoginOut = () => {
     router.push("/login");
   };
-
-  console.log("props", props);
 
   return (
     <Box
@@ -30,25 +30,40 @@ const Header: FC<HeaderProps> = (props) => {
         zIndex: 10,
       }}
     >
-      <Link href="/">ChatApp</Link>
+      <Link className={style.linkText} href="/">
+        ChatApp
+      </Link>
 
       <Box style={{ display: "flex", alignItems: "center" }}>
         <Link
           style={{ marginRight: "50px" }}
           href={`/profile/${props.user?.id || props?.id}`}
+          className={style.linkText}
         >
           Profile
         </Link>
-        <Link style={{ marginRight: "50px" }} href="/conversations">
+        <Link
+          className={style.linkText}
+          style={{ marginRight: "50px" }}
+          href="/conversations"
+        >
           Conversations
         </Link>
-        <Link style={{ marginRight: "50px" }} href="/shop">
+        <Link
+          className={style.linkText}
+          style={{ marginRight: "50px" }}
+          href="/shop"
+        >
           Shop
         </Link>
-        <Link style={{ marginRight: "50px" }} href="/peer">
+        <Link
+          className={style.linkText}
+          style={{ marginRight: "50px" }}
+          href="/peer"
+        >
           Video Chat
         </Link>
-        <Box>{props?.firstName}</Box>
+        <Box className={style.linkText}>{props?.firstName}</Box>
         <Box>
           <Button onClick={handleLoginOut}>
             {props?.id ? "Logout" : "Login"}

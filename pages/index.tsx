@@ -120,18 +120,22 @@ export default function Home(props: any) {
   );
 }
 
-export async function getServerSideProps(ctx) {
+export async function getServerSideProps(ctx: any) {
   //try catch
   try {
-    const res = await fetch("http://localhost:3001/api/auth/status", {
-      method: "GET",
-      headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3001",
-        "Content-Type": "application/json",
-        Cookie: ctx.req.headers.cookie,
-      },
-      credentials: "include",
-    });
+    const res = await fetch(
+      "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api/auth/status" /* "http://localhost:3001/api/auth/status" */,
+      {
+        method: "GET",
+        headers: {
+          "Access-Control-Allow-Origin":
+            "https://chat-nestjs-92c46b4f7e43.herokuapp.com" /* "http://localhost:3001" */,
+          "Content-Type": "application/json",
+          Cookie: ctx.req.headers.cookie,
+        },
+        credentials: "include",
+      }
+    );
 
     // Assuming you have an API route for status
     const data = await res.json();

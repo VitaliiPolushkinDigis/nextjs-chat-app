@@ -9,10 +9,11 @@ import { AuthContext } from "@/utils/context/AuthContext";
 import { useTypedSelector } from "@/redux";
 import Link from "next/link";
 import { ConversationType } from "@/utils/types";
+import { useStyles } from "./ConversationSidebar.styles";
 
 const ConversationSidebar: FC = ({}) => {
   const [showModal, setShowModal] = useState(false);
-
+  const styles = useStyles();
   const { user } = useContext(AuthContext);
 
   const { conversations } = useTypedSelector((state) => state.conversations);
@@ -53,7 +54,7 @@ const ConversationSidebar: FC = ({}) => {
           key={conversation.id}
           href={`/conversations/${conversation.id}`}
         >
-          <Box sx={{ padding: "8px", display: "flex", alignItems: "center" }}>
+          <Box className={styles.conversations}>
             <Box
               sx={{
                 borderRadius: "50%",

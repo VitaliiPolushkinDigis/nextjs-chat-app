@@ -26,7 +26,7 @@ export type UserCredentialsParams = {
 };
 
 export type User = {
-  id: number | string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;

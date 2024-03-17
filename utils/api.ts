@@ -10,13 +10,13 @@ import {
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const API_URL =
-  "http://localhost:3001/api"; /* "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api" */
+  /* "http://localhost:3001/api" */ "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api";
 // "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api"; /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
 const config: AxiosRequestConfig = {
   withCredentials: true,
   headers: {
     "Access-Control-Allow-Origin":
-      /* "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api" */ "http://localhost:3001/api",
+      "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api" /* "http://localhost:3001/api" */,
     "Content-Type": "application/json",
   },
 };

@@ -7,7 +7,6 @@ import { UserCredentialsParams } from "@/utils/types";
 import { postLoginUser, useApi } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { setCookie } from "nookies";
 
 import { Theme } from "@mui/material";
 import { AuthContext } from "@/utils/context/AuthContext";
