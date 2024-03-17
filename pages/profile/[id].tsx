@@ -7,9 +7,9 @@ import { getAuth } from "@/redux/slices/userSlice";
 import { useGetProfilePostsQuery, useLazyGetProfileQuery } from "@/utils/api";
 import { UserWithoutPassword } from "@/utils/types";
 import { useParams, useRouter } from "next/navigation";
-import Post from "../components/Post/Post";
-import TextFieldComponent from "../components/TextFieldComponent/TextFieldComponent";
-import Page from "../components/layouts/page/Page";
+import Post from "../../components/Post/Post";
+import TextFieldComponent from "../../components/TextFieldComponent/TextFieldComponent";
+import Page from "../../components/layouts/page/Page";
 
 /* import { useAuth } from '../../hooks/useAuth'; */
 

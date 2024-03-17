@@ -11,7 +11,7 @@ import { User } from "@/utils/types";
 import { Provider } from "react-redux";
 import store, { wrapper } from "@/redux";
 import { useApi } from "@/utils/api";
-import Header from "./components/layouts/header/Header";
+import Header from "../components/layouts/header/Header";
 
 export const theme = createTheme({
   palette: {

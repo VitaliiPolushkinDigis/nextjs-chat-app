@@ -6,8 +6,8 @@ import PeerType, { MediaConnection } from "peerjs";
 import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import io from "socket.io-client";
-import VideoCard from "../components/cards/Video/Videos";
-import Page from "../components/layouts/page/Page";
+import VideoCard from "../../components/cards/Video/Videos";
+import Page from "../../components/layouts/page/Page";
 
 const initializePeerInstance = ({
   initiator,

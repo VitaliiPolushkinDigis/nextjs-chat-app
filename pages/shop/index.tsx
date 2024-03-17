@@ -1,8 +1,8 @@
-import Page from "../components/layouts/page/Page";
+import Page from "../../components/layouts/page/Page";
 import { Box } from "@mui/material";
-import Canvas from "../components/Shop/Canvas/Canvas";
-import Customizer from "../components/Shop/Customizer/Customizer";
-import Content from "../components/Shop/Content/Content";
+import Canvas from "../../components/Shop/Canvas/Canvas";
+import Customizer from "../../components/Shop/Customizer/Customizer";
+import Content from "../../components/Shop/Content/Content";
 
 interface ShopProps {
   items: {

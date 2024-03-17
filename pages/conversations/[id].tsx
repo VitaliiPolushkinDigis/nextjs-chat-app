@@ -1,13 +1,13 @@
 import { FC, useContext, useEffect } from "react";
-import ConversationSidebar from "../components/ConversationSidebar/ConversationSidebar";
-import Page from "../components/layouts/page/Page";
+import ConversationSidebar from "../../components/ConversationSidebar/ConversationSidebar";
+import Page from "../../components/layouts/page/Page";
 import { SocketContext } from "@/utils/context/SocketContext";
 import { useAppDispatch } from "@/redux";
 import { useParams } from "next/navigation";
 import { MessageEventPayload } from "@/utils/types";
 import { Grid } from "@mui/material";
 import { addMessage, fetchMessages } from "@/redux/slices/messageSlice";
-import MessagePanel from "../components/messages/MessagePanel";
+import MessagePanel from "../../components/messages/MessagePanel";
 
 interface ConversationProps {}
 
