@@ -6,7 +6,7 @@ import {
   headContainerAnimation,
   headContentAnimation,
   headTextAnimation,
-} from "../../../../utils/config/motion";
+} from "../../../utils/config/motion";
 
 export default function Content() {
   const snap = useSnapshot(state);

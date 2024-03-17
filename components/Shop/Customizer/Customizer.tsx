@@ -6,17 +6,17 @@ import {
   headContentAnimation,
   headTextAnimation,
   fadeAnimation,
-} from "../../../../utils/config/motion";
+} from "../../../utils/config/motion";
 import {
   downloadCanvasToImage,
   getContrastingColor,
   reader,
-} from "../../../../utils/config/helpers";
+} from "../../../utils/config/helpers";
 import {
   DecalTypes,
   EditorTabs,
   FilterTabs,
-} from "../../../../utils/config/constants";
+} from "../../../utils/config/constants";
 import state from "../store";
 import { useSnapshot } from "valtio";
 import { useState } from "react";
