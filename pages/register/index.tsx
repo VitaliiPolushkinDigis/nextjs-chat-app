@@ -2,14 +2,12 @@ import { Button, Grid, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import { FC } from "react";
 
+import { useApi } from "@/utils/api";
+import { CreateUserParams } from "@/utils/types";
+import Link from "next/link";
 import { useToasts } from "react-toast-notifications";
 import { TextFieldComponent } from "../../components/TextFieldComponent/TextFieldComponent";
-import { CreateUserParams, UserCredentialsParams } from "@/utils/types";
-import { postLoginUser, postRegisterUser, useApi } from "@/utils/api";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-import { Theme } from "@mui/material";
 interface RegisterFormProps {}
 
 const RegisterForm: FC<RegisterFormProps> = () => {

@@ -1,12 +1,8 @@
 import { useAppDispatch, useTypedSelector } from "@/redux";
 import { getAuth } from "@/redux/slices/userSlice";
-/* import { useSocket } from "@/utils/hooks/useSocket"; */
 import { Box, Button, Card } from "@mui/material";
-import PeerType, { MediaConnection } from "peerjs";
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
-import { v4 as uuid } from "uuid";
+import { FC, useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import VideoCard from "../../components/cards/Video/Videos";
 import Page from "../../components/layouts/page/Page";
 
 const initializePeerInstance = ({
@@ -22,24 +18,6 @@ const initializePeerInstance = ({
       initiator,
       trickle: false,
       stream,
-      ...(initiator
-        ? {
-            config: {
-              iceServers: [
-                {
-                  urls: "stun:numb.viagenie.ca",
-                  username: "sultan1640@gmail.com",
-                  credential: "98376683",
-                },
-                {
-                  urls: "turn:numb.viagenie.ca",
-                  username: "sultan1640@gmail.com",
-                  credential: "98376683",
-                },
-              ],
-            },
-          }
-        : {}),
     });
   }
 };
@@ -48,27 +26,11 @@ interface PeerProps {}
 
 const PeerPage: FC<PeerProps> = () => {
   const [userName, setUserName] = useState("");
-  /* const [peer, setPeer] = useState<any>(); */
 
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const localScreenShareVideoRef = useRef<HTMLVideoElement>(null);
-  // const [isReceivingCall, setIsReceivingCall] = useState(false);
-  // const [microphoneEnabled, setMicrophoneEnabled] = useState(true);
-  // const [videoEnabled, setVideoEnabled] = useState(true);
-  // const [disableLocalVideo, setDisableLocalVideo] = useState(false);
-  // const [localStream, setLocalStream] = useState<MediaStream>();
-  // const [remoteStream, setRemoteStream] = useState<MediaStream>();
-  // const [showRemoteVideo, setShowRemoteVideo] = useState(true);
-  // const [deafen, setDeafen] = useState(false);
-  // const [connectedCall, setConnectedCall] = useState<MediaConnection>();
   const { user } = useTypedSelector((state) => state.user);
-
-  /* const { socket } = useSocket(); */
 
   const dispatch = useAppDispatch();
 
-  //new 2
   const [yourID, setYourID] = useState("");
   const [users, setUsers] = useState({});
   const [stream, setStream] = useState<MediaStream>();
@@ -76,9 +38,6 @@ const PeerPage: FC<PeerProps> = () => {
   const [caller, setCaller] = useState("");
   const [callerSignal, setCallerSignal] = useState();
   const [callAccepted, setCallAccepted] = useState(false);
-
-  /*   const [myVideo, setMyVideo] = useState<any>();
-  const [remoteVideo, setRemoteVideo] = useState<any>(); */
 
   const userVideo = useRef<HTMLVideoElement>(null);
   const partnerVideo = useRef<HTMLVideoElement>(null);
@@ -181,43 +140,10 @@ const PeerPage: FC<PeerProps> = () => {
     e.preventDefault();
   };
 
-  // const shareScreen = async () => {
-  //   const stream = await navigator.mediaDevices.getDisplayMedia({
-  //     video: true,
-  //     audio: false,
-  //   });
-  //   console.log(stream);
-  //   console.log(stream.getTracks());
-  //   console.log(remoteStream);
-  //   if (remoteStream && connectedCall) {
-  //     console.log("Remote Stream & Connected Call are defined");
-  //     console.log("Senders:", connectedCall.peerConnection.getSenders());
-  //     connectedCall.peerConnection
-  //       .getSenders()[1]
-  //       .replaceTrack(stream.getTracks()[0]);
-  //     remoteStream.addTrack(stream.getTracks()[0]);
-  //   }
-  //   if (localScreenShareVideoRef.current) {
-  //     console.log("Playing Video for Screen Sharing");
-  //     localScreenShareVideoRef.current.srcObject = stream;
-  //     localScreenShareVideoRef.current.play();
-  //   }
-  // };
-
-  // const toggleRemoteVideo = () =>
-  //   remoteStream &&
-  //   setShowRemoteVideo((prev) => {
-  //     remoteStream.getVideoTracks()[0].enabled = !prev;
-  //     return !prev;
-  //   });
-
-  console.log("users", users);
-
   return (
     <Box component={"section"} minHeight={"100vh"}>
       <Page>
         user: {user?.firstName}
-        {/* peer: {peer && peer.id} */}
         your ID: {yourID}
         <div>
           My video:{" "}

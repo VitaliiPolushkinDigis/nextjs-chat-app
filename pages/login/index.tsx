@@ -1,18 +1,16 @@
+import { useApi } from "@/utils/api";
+import { UserCredentialsParams } from "@/utils/types";
 import { Button, Grid, Typography } from "@mui/material";
 import { useFormik } from "formik";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FC, useContext } from "react";
 import { useToasts } from "react-toast-notifications";
 import { TextFieldComponent } from "../../components/TextFieldComponent/TextFieldComponent";
-import { UserCredentialsParams } from "@/utils/types";
-import { postLoginUser, useApi } from "@/utils/api";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-import { Theme } from "@mui/material";
-import { AuthContext } from "@/utils/context/AuthContext";
-import { HttpStatusCode } from "axios";
 import { useAppDispatch, useTypedSelector } from "@/redux";
 import { getAuth, loginUser } from "@/redux/slices/userSlice";
+import { AuthContext } from "@/utils/context/AuthContext";
 
 interface LoginFormProps {}
 
