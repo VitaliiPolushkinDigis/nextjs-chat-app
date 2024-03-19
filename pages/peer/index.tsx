@@ -136,10 +136,6 @@ const PeerPage: FC<PeerProps> = () => {
     );
   }
 
-  const connect = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
-
   return (
     <Box component={"section"} minHeight={"100vh"}>
       <Page>
@@ -178,18 +174,6 @@ const PeerPage: FC<PeerProps> = () => {
           );
         })}
         <div> {incomingCall}</div>
-        <Card>
-          <form onSubmit={connect}>
-            <label htmlFor="userName">set name</label>
-            <input
-              type="text"
-              id="userName"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-            />
-            <Button type="submit">Connect</Button>
-          </form>
-        </Card>
       </Page>
     </Box>
   );
