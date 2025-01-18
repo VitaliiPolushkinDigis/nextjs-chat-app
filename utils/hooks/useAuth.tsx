@@ -11,6 +11,8 @@ export const useAuth = () => {
   const controller = new AbortController();
 
   useEffect(() => {
+    console.log("---------hoooook");
+
     useApi.status().then((data) => {
       updateUser(data);
       setLoading(false);

@@ -28,6 +28,8 @@ export default function App({ Component, ...rest }: AppProps) {
   const [user, updateUser] = useState<User>();
 
   useEffect(() => {
+    console.log("------------_app.tsx");
+
     useApi.status().then(
       (d) => {
         updateUser(d);

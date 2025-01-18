@@ -45,18 +45,26 @@ const LoginForm: FC<LoginFormProps> = () => {
 
   const submitForm = async (values: UserCredentialsParams) => {
     try {
-      const res = await dispatch(loginUser(values));
-      if (!(res as any).error) {
+      //REFACTOR
+      // const res = await dispatch(loginUser(values));
+      const login = await useApi.login(values);
+      console.log("----------login", login, login === "OK");
+
+      if (login) {
         addToast("Login Successfully", { appearance: "success" });
-        const getStatus = await dispatch(getAuth());
+
         const status = await useApi.status();
+
+        console.log("status", status);
+
         updateUser(status);
-        router.push(`/profile/${(getStatus.payload as any).id}`);
+        router.push(`/profile/${status.id}`);
       } else {
         addToast("Login Unsuccessfully", { appearance: "error" });
+        console.log("ERRRRRRR,", login);
       }
     } catch (error) {
-      console.error(error);
+      console.error("ERRORORORO", error);
       addToast("Login Unsuccessfully", { appearance: "error" });
     }
   };

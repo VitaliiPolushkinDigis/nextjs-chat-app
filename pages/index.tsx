@@ -120,38 +120,42 @@ export default function Home(props: any) {
   );
 }
 
-export async function getServerSideProps(ctx: any) {
-  //try catch
-  try {
-    const res = await fetch(
-      "https://test-nest-api-production.up.railway.app/api/auth/status" /* "http://localhost:3001/api/auth/status" */,
-      {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin":
-            "https://test-nest-api-production.up.railway.app" /* "http://localhost:3001" */,
-          "Content-Type": "application/json",
-          Cookie: ctx.req.headers.cookie,
-        },
-        credentials: "include",
-      }
-    );
+// export async function getServerSideProps(ctx: any) {
+//   console.log("hellooooooooooooo");
 
-    // Assuming you have an API route for status
-    const data = await res.json();
+//   //try catch
+//   try {
+//     const res = await fetch(
+//       /* "https://test-nest-api-production.up.railway.app/api/auth/status" */ "http://localhost:3001/api/auth/status",
+//       {
+//         method: "GET",
+//         headers: {
+//           "Access-Control-Allow-Origin":
+//             /* "https://test-nest-api-production.up.railway.app" */ "http://localhost:3001",
+//           "Content-Type": "application/json",
+//           Cookie: ctx.req.headers.cookie,
+//         },
+//         credentials: "include",
+//       }
+//     );
 
-    return {
-      props: data,
-    };
-  } catch (error) {
-    console.error(error);
+//     // Assuming you have an API route for status
+//     const data = await res.json();
 
-    // Handle errors, maybe redirect to an error page
-    return {
-      redirect: {
-        destination: "/error",
-        permanent: false,
-      },
-    };
-  }
-}
+//     console.log("-------------res status", data);
+
+//     return {
+//       props: data,
+//     };
+//   } catch (error) {
+//     console.error(error);
+
+//     // Handle errors, maybe redirect to an error page
+//     return {
+//       redirect: {
+//         destination: "/error",
+//         permanent: false,
+//       },
+//     };
+//   }
+// }

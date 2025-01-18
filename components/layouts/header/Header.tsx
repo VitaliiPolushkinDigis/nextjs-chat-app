@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import styles from "./Header.module.css";
+import { useApi } from "@/utils/api";
 
 interface HeaderProps {
   id?: number;
@@ -17,8 +18,12 @@ const Header: FC<HeaderProps> = (props) => {
 
   const [isMenuOpen, setIsOpenMenu] = useState(false);
 
-  const handleLoginOut = () => {
-    router.push("/login");
+  const handleLoginOut = async () => {
+    const logout = await useApi.logout().then((res) => {
+      console.log("logout, component", res);
+
+      router.push("/login");
+    });
   };
 
   const linkStyles = {

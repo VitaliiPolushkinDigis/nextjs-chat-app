@@ -13,12 +13,12 @@ import {
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const API_URL =
-  "https://test-nest-api-production.up.railway.app/api"; /* "http://localhost:3001/api" */ /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
+  /* "http://localhost:3001/api" */ "https://test-nest-api-production.up.railway.app/api"; /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
 const config: AxiosRequestConfig = {
   withCredentials: true,
   headers: {
     "Access-Control-Allow-Origin":
-      "https://test-nest-api-production.up.railway.app/api" /* "http://localhost:3001/api" */,
+      /* "http://localhost:3001/api" */ "https://test-nest-api-production.up.railway.app/api",
     "Content-Type": "application/json",
   },
 };
@@ -39,6 +39,8 @@ export const useApi = {
   },
   async status() {
     try {
+      console.log("--------called useApi.status");
+
       const { data } = await instance.get(`/auth/status`);
       return data;
     } catch (error) {
@@ -46,28 +48,32 @@ export const useApi = {
       throw new Error(`${error}`);
     }
   },
+  async logout() {
+    const res = await instance.post(`/auth/logout`);
+  },
 };
 
+//use instance instead of directly axios
 export const postRegisterUser = async (data: CreateUserParams) =>
-  axios.post(`${API_URL}/auth/register`, data, config);
+  instance.post(`${API_URL}/auth/register`, data, config);
 
 export const postLoginUser = async (data: UserCredentialsParams) =>
-  axios.post(`${API_URL}/auth/login`, data, config);
+  instance.post(`${API_URL}/auth/login`, data, config);
 
 export const getAuthUser = (cookies: any) =>
-  axios.get<User>(`${API_URL}/auth/status`, {
+  instance.get<User>(`${API_URL}/auth/status`, {
     ...config,
     headers: { ...config.headers, Cookie: cookies },
   });
 
 export const getConversations = () =>
-  axios.get<ConversationType[]>(`${API_URL}/conversations`, config);
+  instance.get<ConversationType[]>(`${API_URL}/conversations`, config);
 
 export const getConversationMessages = (id: number) =>
-  axios.get<FetchMessagePayload>(`${API_URL}/messages/${id}`, config);
+  instance.get<FetchMessagePayload>(`${API_URL}/messages/${id}`, config);
 
 export const postNewMessage = (data: CreateMessageParams) => {
-  axios.post(`${API_URL}/messages`, data, config);
+  instance.post(`${API_URL}/messages`, data, config);
 };
 
 export const API_AC_TYPES = {
