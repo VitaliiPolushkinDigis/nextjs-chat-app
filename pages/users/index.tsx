@@ -18,7 +18,11 @@ const UsersPage = () => {
           ? "Loading ..."
           : users
           ? users.map((u) => (
-              <Link href={`/profile/${u.profile?.id}`} className={styles.item}>
+              <Link
+                key={u.id}
+                href={`/profile/${u.profile?.id}`}
+                className={styles.item}
+              >
                 <img
                   style={{ borderRadius: "50%", width: "60px", height: "60px" }}
                   src={

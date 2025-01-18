@@ -1,4 +1,5 @@
 import { Post } from "@/utils/types";
+import Image from "next/image";
 import { FC } from "react";
 
 interface PostProps {
@@ -23,9 +24,13 @@ const PostComponent: FC<PostProps> = ({ p }) => {
     >
       <p style={{ fontWeight: 700 }}>{p.title}</p>
       {p.imgUrl && (
-        <img
-          style={{ width: "-webkit-fill-available", borderRadius: "12px" }}
+        <Image
+          style={{ borderRadius: "12px" }}
           src={p.imgUrl}
+          alt="Image description"
+          layout="responsive"
+          width={100} // Relative width (for responsiveness)
+          height={75} // Relative height (for responsiveness)
         />
       )}
       <p>{p.subtitle}</p>
@@ -46,7 +51,7 @@ const PostComponent: FC<PostProps> = ({ p }) => {
       >
         <p>Comments:</p>
         {p.comments.map((p) => (
-          <div>
+          <div key={p.id}>
             <div style={{ textTransform: "capitalize", fontWeight: 600 }}>
               {p.author.firstName} {p.author.lastName}
             </div>

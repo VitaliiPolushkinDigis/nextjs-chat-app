@@ -14,6 +14,7 @@ import TextFieldComponent from "../../components/TextFieldComponent/TextFieldCom
 import Page from "../../components/layouts/page/Page";
 import styles from "../../components/Profile/Profile.module.css";
 import { AuthContext } from "@/utils/context/AuthContext";
+import Image from "next/image";
 
 interface PostsProps {
   id: number;
@@ -83,13 +84,15 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
           {profile && (
             <div className={styles.mainContent}>
               <div className={styles.profileInfo}>
-                <img
+                <Image
                   className={styles.avatar}
                   src={
                     profile?.data?.avatarUrl ||
                     "https://i.pinimg.com/564x/15/e7/7e/15e77e7a76cbf41f029acf220059ce26.jpg"
                   }
                   alt="avatar"
+                  width={200} // Set the width of the avatar
+                  height={200} // Set the height of the avatar
                 />
                 <div>
                   <p style={{ textTransform: "capitalize", fontSize: "28px" }}>
