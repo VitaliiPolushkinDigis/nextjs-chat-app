@@ -17,7 +17,7 @@ const initialState: MessageState = {
 export const fetchMessages = (id: number) => {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch({ type: `conversations/GET_MESSAGES${API_AC_TYPES.REQUESTED}` });
+      dispatch({ type: `messages/GET_MESSAGES${API_AC_TYPES.REQUESTED}` });
       const conv = await getConversationMessages(id);
       dispatch({
         type: `messages/GET_MESSAGES_SUCCESSFUL`,

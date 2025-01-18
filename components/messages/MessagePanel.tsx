@@ -3,21 +3,21 @@ import { FC, FormEvent, useState } from "react";
 import { MessageContainer } from "./MessageContainer";
 import { MessageInputField } from "./MessageInputField";
 import { MessagePanelHeader } from "./MessagePanelHeader";
-import { useParams } from "next/navigation";
 import { postNewMessage } from "@/utils/api";
+import { ConversationType } from "@/utils/types";
 
-interface MessagePanelProps {}
+interface MessagePanelProps {
+  selectedConversation?: ConversationType;
+}
 
-const MessagePanel: FC<MessagePanelProps> = ({}) => {
-  const params = useParams();
-  const id = params?.id;
+const MessagePanel: FC<MessagePanelProps> = ({ selectedConversation }) => {
   const [message, setMessage] = useState("");
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!id || !message) return;
+    if (!selectedConversation?.id || !message) return;
     try {
       postNewMessage({
-        conversationId: parseInt(id as string),
+        conversationId: selectedConversation.id,
         content: message,
       });
     } catch (error) {
@@ -30,7 +30,7 @@ const MessagePanel: FC<MessagePanelProps> = ({}) => {
   return (
     <>
       <MessagePanelHeader />
-      <MessageContainer />
+      <MessageContainer id={selectedConversation?.id || 0} />
       <MessageInputField
         message={message}
         setMessage={setMessage}

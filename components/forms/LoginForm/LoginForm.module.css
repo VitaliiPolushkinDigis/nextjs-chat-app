@@ -1,0 +1,38 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: #f4f4f4;
+  background-size: cover;
+}
+
+.form {
+  padding: 40px;
+  background: ffffffc9;
+  border-radius: 16px;
+  width: 500px;
+  margin: 20px;
+  background: #fdfdfd;
+  border-radius: 8px;
+}
+.form > div {
+  margin-bottom: 16px;
+}
+.btnsWrapper {
+  display: flex;
+  justify-content: center;
+}
+.btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.submitBtn {
+  background: #378158;
+  color: white;
+}

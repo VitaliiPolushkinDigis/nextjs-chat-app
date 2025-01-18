@@ -1,12 +1,10 @@
-import { Modal } from "@mui/material";
-import { FC, ReactNode } from "react";
-import { BoxWrapper, classes } from "./SimpleModal.helper";
+import React, { FC, ReactNode } from "react";
+import style from "./SimpleModal.module.css";
 
 interface SimpleModalProps {
   open: boolean;
   handleClose: () => void;
   padding?: string;
-
   children: ReactNode;
 }
 
@@ -16,17 +14,18 @@ const SimpleModal: FC<SimpleModalProps> = ({
   padding,
   children,
 }) => {
+  if (!open) return null;
+
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <BoxWrapper className={classes.box} padding={padding}>
+    <div className={style.modalOverlay} onClick={handleClose}>
+      <div
+        className={style.modalBox}
+        style={{ padding }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
-      </BoxWrapper>
-    </Modal>
+      </div>
+    </div>
   );
 };
 

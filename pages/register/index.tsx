@@ -7,11 +7,15 @@ import { CreateUserParams } from "@/utils/types";
 import Link from "next/link";
 import { useToasts } from "react-toast-notifications";
 import { TextFieldComponent } from "../../components/TextFieldComponent/TextFieldComponent";
+import styles from "@/components/forms/LoginForm/LoginForm.module.css";
+import { validationSchemaRegister } from "@/components/RegisterForm/RegisterForm.helper";
+import { useRouter } from "next/navigation";
 
 interface RegisterFormProps {}
 
 const RegisterForm: FC<RegisterFormProps> = () => {
   const { addToast } = useToasts();
+  const router = useRouter();
   /*  const styles = useStyles(); */
   const formik = useFormik({
     initialValues: {
@@ -24,10 +28,10 @@ const RegisterForm: FC<RegisterFormProps> = () => {
     enableReinitialize: true,
     validateOnChange: true,
     validateOnBlur: false,
-    /*  validationSchema: validationSchemaAccountBox, */
+    validationSchema: validationSchemaRegister,
     onSubmit: (values, actions) => {
       const { repeatPassword, ...dataToSend } = values;
-      submitForm(dataToSend);
+      submitForm(dataToSend as any);
       actions.resetForm({});
     },
   });
@@ -45,6 +49,7 @@ const RegisterForm: FC<RegisterFormProps> = () => {
     try {
       await useApi.register(data).then(() => {
         addToast("Registered Successfully", { appearance: "success" });
+        router.push("/login");
       });
     } catch (error: any) {
       addToast(error.response.data.message, { appearance: "error" });
@@ -52,108 +57,122 @@ const RegisterForm: FC<RegisterFormProps> = () => {
   };
 
   return (
-    <form /* className={styles.registerForm} */ onSubmit={handleSubmit}>
-      <Grid>
-        <TextFieldComponent
-          placeholder="Your email"
-          name="email"
-          value={values.email ? values.email : ""}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          setFieldTouched={setFieldTouched}
-          errorText={errors.email}
-          fullWidth
-          helperText
-          label="Your Email"
-          dataAttr="email"
-        />
-      </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={6}>
+    <div className={styles.wrapper}>
+      <form className={styles.form} onSubmit={handleSubmit} data-attr="form">
+        <div
+          style={{
+            fontSize: "22px",
+            marginBottom: "16px",
+            color: "primary.main",
+          }}
+        >
+          Welcome! Fill the form to register new account
+        </div>
+        <div>
           <TextFieldComponent
-            placeholder="Your Name"
-            name="firstName"
-            value={values.firstName ? values.firstName : ""}
+            placeholder="Your email"
+            name="email"
+            value={values.email || ""}
             onChange={handleChange}
             onBlur={handleBlur}
             setFieldTouched={setFieldTouched}
-            errorText={errors.firstName}
+            errorText={errors.email}
             fullWidth
+            dataAttr="email"
+            label="Your Email"
             helperText
-            label="Your Name"
-            dataAttr="firstName"
           />
-        </Grid>
-        <Grid item xs={6}>
+        </div>
+        <div style={{ display: "flex" }}>
+          <div style={{ marginRight: "16px" }}>
+            <TextFieldComponent
+              placeholder="Your First Name"
+              name="firstName"
+              value={values.firstName || ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              setFieldTouched={setFieldTouched}
+              errorText={errors.firstName}
+              fullWidth
+              dataAttr="firstName"
+              label="Your First Name"
+            />
+          </div>
+          <div>
+            <TextFieldComponent
+              placeholder="Your Last Name"
+              name="lastName"
+              value={values.lastName || ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              setFieldTouched={setFieldTouched}
+              errorText={errors.lastName}
+              fullWidth
+              dataAttr="lastName"
+              label="Your Last Name"
+            />
+          </div>
+        </div>
+        <div>
           <TextFieldComponent
-            placeholder="Your Lastname"
-            name="lastName"
-            value={values.lastName ? values.lastName : ""}
+            placeholder="Your password"
+            name="password"
+            value={values.password ? values.password : ""}
             onChange={handleChange}
             onBlur={handleBlur}
             setFieldTouched={setFieldTouched}
-            errorText={errors.lastName}
+            errorText={errors.password}
             fullWidth
-            helperText
-            label="Your Lastname"
-            dataAttr="lastName"
+            label="Your password"
+            dataAttr="password"
+            type="password"
           />
-        </Grid>
-      </Grid>
-      <Grid>
-        <TextFieldComponent
-          placeholder="Your password"
-          name="password"
-          value={values.password ? values.password : ""}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          setFieldTouched={setFieldTouched}
-          errorText={errors.password}
-          fullWidth
-          helperText
-          label="Your password"
-          dataAttr="password"
-        />
-      </Grid>
-      <Grid>
-        <TextFieldComponent
-          placeholder="Your password"
-          name="repeatPassword"
-          value={values.repeatPassword ? values.repeatPassword : ""}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          setFieldTouched={setFieldTouched}
-          errorText={errors.repeatPassword}
-          fullWidth
-          helperText
-          label="Your password"
-          dataAttr="password-repeat"
-        />
-      </Grid>
-      <Button
-        data-attr="submit"
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        fullWidth
-      >
-        Submit
-      </Button>
-      <Button
-        type="reset"
-        onClick={() => resetForm()}
-        variant="outlined"
-        color="info"
-        size="large"
-        fullWidth
-      >
-        Reset
-      </Button>
-      <Typography>
-        <Link href="/login">Already have an account? Login.</Link>
-      </Typography>
-    </form>
+        </div>
+        <div>
+          <TextFieldComponent
+            placeholder="Your password"
+            name="repeatPassword"
+            value={values.repeatPassword ? values.repeatPassword : ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            setFieldTouched={setFieldTouched}
+            errorText={errors.repeatPassword}
+            fullWidth
+            label="Repeat your password"
+            dataAttr="password-repeat"
+            type="password"
+          />
+        </div>
+        <div className={styles.btnsWrapper}>
+          <button
+            className={`${styles.btn} ${styles.submitBtn}`}
+            data-attr="submit"
+            type="submit"
+            color="primary"
+            style={{ marginRight: "16px" }}
+          >
+            Submit
+          </button>
+          <button
+            type="reset"
+            onClick={() => resetForm()}
+            className={`${styles.btn}`}
+          >
+            Reset
+          </button>
+        </div>
+        <p
+          style={{
+            marginTop: "16px",
+            textAlign: "center",
+            color: "primary.main",
+            textDecoration: "underline",
+          }}
+        >
+          <Link href="/login">Already have an account? Login.</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 

@@ -7,19 +7,15 @@ export const EditorTabs: any = [
     name: "filepicker",
     icon: null,
   },
-  {
-    name: "aipicker",
-    icon: null,
-  },
 ];
 
 export const FilterTabs: any = [
   {
-    name: "logoShirt",
+    name: "Apply as Pircture",
     icon: null,
   },
   {
-    name: "stylishShirt",
+    name: "Apply Texture on T-Shirt",
     icon: null,
   },
 ];

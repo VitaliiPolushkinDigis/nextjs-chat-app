@@ -1,17 +1,19 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import { useFormik } from "formik";
-import { FC, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 
 import { useAppDispatch, useTypedSelector } from "@/redux";
-import { getAuth } from "@/redux/slices/userSlice";
-import { useGetProfilePostsQuery, useLazyGetProfileQuery } from "@/utils/api";
-import { UserWithoutPassword } from "@/utils/types";
-import { useParams, useRouter } from "next/navigation";
+import {
+  useCreatePostMutation,
+  useGetProfilePostsQuery,
+  useLazyGetProfileQuery,
+} from "@/utils/api";
+import { useParams } from "next/navigation";
 import Post from "../../components/Post/Post";
 import TextFieldComponent from "../../components/TextFieldComponent/TextFieldComponent";
 import Page from "../../components/layouts/page/Page";
-
-/* import { useAuth } from '../../hooks/useAuth'; */
+import styles from "../../components/Profile/Profile.module.css";
+import { AuthContext } from "@/utils/context/AuthContext";
 
 interface PostsProps {
   id: number;
@@ -22,9 +24,10 @@ const Posts: FC<PostsProps> = ({ id }) => {
 
   return (
     <>
-      {data?.map((p) => <Post key={p.id} p={p} />) || (
-        <Typography>No posts yet</Typography>
-      )}
+      {data
+        ?.slice()
+        ?.sort((a, b) => (a?.id > b?.id ? -1 : 1))
+        ?.map((p) => <Post key={p.id} p={p} />) || <p>No posts yet</p>}
     </>
   );
 };
@@ -33,12 +36,12 @@ interface ProfilePageProps {}
 
 const ProfilePage: FC<ProfilePageProps> = ({}) => {
   const dispatch = useAppDispatch();
-  const { user } = useTypedSelector((state) => state.user);
+  const { user } = useContext(AuthContext);
 
   const params = useParams();
   const id = params?.id;
 
-  /*  const [createPost, resulr] = useCreatePostMutation(); */
+  const [createPost, resulr] = useCreatePostMutation();
 
   const [getProfile, profile] = useLazyGetProfileQuery();
 
@@ -56,7 +59,7 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
     validateOnBlur: false,
 
     onSubmit: (values, actions) => {
-      /*      createPost({
+      createPost({
         ...values,
         likes: 0,
         imgUrl:
@@ -64,115 +67,123 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
           "https://techcrunch.com/wp-content/uploads/2022/06/instagram-pin-posts.png",
       }).then(() => {
         actions.resetForm({});
-      }); */
+      });
     },
   });
 
   useEffect(() => {
     if (id) getProfile(id);
   }, [dispatch, id]);
+  console.log("profile.data", profile.data, user);
 
   return (
     <Page>
-      <Grid
-        container
-        direction="row"
-        style={{ flexWrap: "inherit", margin: "0 auto", width: "80%" }}
-      >
-        <Box style={{ width: "100%" }}>
+      <div className={styles.profileWrapper}>
+        <div className={styles.content}>
           {profile && (
-            <Box style={{ display: "flex" }}>
-              <Box>
+            <div className={styles.mainContent}>
+              <div className={styles.profileInfo}>
                 <img
-                  style={{ borderRadius: "50%", width: "200px" }}
-                  src={profile?.data?.avatarUrl}
+                  className={styles.avatar}
+                  src={
+                    profile?.data?.avatarUrl ||
+                    "https://i.pinimg.com/564x/15/e7/7e/15e77e7a76cbf41f029acf220059ce26.jpg"
+                  }
                   alt="avatar"
                 />
-              </Box>
-              <Box>
-                <Typography>
-                  {user?.firstName} {user?.lastName}
-                </Typography>
-                {
-                  profile?.data?.status ? (
-                    <Typography>{profile?.data?.status}</Typography>
-                  ) : null /* (
-                  <TextFieldComponent
-                    placeholder="Your Status"
-                    name="text"
-                    value={values.text ? values.text : ''}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    setFieldTouched={setFieldTouched}
-                    errorText={errors.text}
-                    fullWidth
-                    helperText
-                    label="Your Status"
-                    dataAttr="text"
-                  profileData/>
-                ) */
-                }
-
-                <form onSubmit={handleSubmit} data-attr="form">
-                  <Typography>create your post</Typography>
-                  <TextFieldComponent
-                    placeholder="Post title"
-                    name="title"
-                    value={values.title ? values.title : ""}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    setFieldTouched={setFieldTouched}
-                    errorText={errors.title}
-                    fullWidth
-                    helperText
-                    label="Post Title"
-                  />
-                  <TextFieldComponent
-                    placeholder="Your Subtitle"
-                    name="subtitle"
-                    value={values.subtitle || ""}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    setFieldTouched={setFieldTouched}
-                    errorText={errors.subtitle}
-                    fullWidth
-                    helperText
-                    label="Your Subtitle"
-                  />
-                  <TextFieldComponent
-                    placeholder="Your Description"
-                    name="description"
-                    value={values.description || ""}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    setFieldTouched={setFieldTouched}
-                    errorText={errors.description}
-                    fullWidth
-                    helperText
-                    label="Your Description"
-                  />
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    fullWidth
-                    data-attr="submit"
+                <div>
+                  <p style={{ textTransform: "capitalize", fontSize: "28px" }}>
+                    {profile?.data?.user.firstName}{" "}
+                    {profile?.data?.user.lastName}
+                  </p>
+                  <div style={{ marginLeft: "16px" }}>
+                    <p>Birth-Day: {profile?.data?.birthDay}</p>
+                    <p>City: {profile?.data?.city}</p>
+                    <p>Country: {profile?.data?.country}</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                {profile.data?.id === user?.id && (
+                  <form
+                    onSubmit={handleSubmit}
+                    data-attr="form"
+                    style={{
+                      marginTop: "32px",
+                      filter: "drop-shadow(#378158 0px 5px 6px)",
+                    }}
                   >
-                    Create a new post
-                  </Button>
-                </form>
+                    <p style={{ fontSize: "24px", marginBottom: "16px" }}>
+                      What Would You Like to Share?
+                    </p>
+                    <TextFieldComponent
+                      placeholder="Post title"
+                      name="title"
+                      value={values.title ? values.title : ""}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      setFieldTouched={setFieldTouched}
+                      errorText={errors.title}
+                      fullWidth
+                      helperText
+                      label="Post Title"
+                    />
+                    <TextFieldComponent
+                      placeholder="Your Subtitle"
+                      name="subtitle"
+                      value={values.subtitle || ""}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      setFieldTouched={setFieldTouched}
+                      errorText={errors.subtitle}
+                      fullWidth
+                      helperText
+                      label="Your Subtitle"
+                    />
+                    <TextFieldComponent
+                      placeholder="Your Description"
+                      name="description"
+                      value={values.description || ""}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      setFieldTouched={setFieldTouched}
+                      errorText={errors.description}
+                      fullWidth
+                      helperText
+                      label="Your Description"
+                    />
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      fullWidth
+                      data-attr="submit"
+                      sx={{ marginTop: "20px" }}
+                    >
+                      Create a new post
+                    </Button>
+                  </form>
+                )}
 
                 {id && (
-                  <Box style={{ marginTop: "40px" }}>
+                  <div style={{ marginTop: "40px" }}>
+                    <h2
+                      style={{
+                        textTransform: "capitalize",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      {profile.data?.user.firstName} feed:
+                    </h2>
                     <Posts id={parseInt(id as string)} />
-                  </Box>
+                  </div>
                 )}
-              </Box>
-            </Box>
+              </div>
+            </div>
           )}
-        </Box>
-      </Grid>
+        </div>
+      </div>
     </Page>
   );
 };

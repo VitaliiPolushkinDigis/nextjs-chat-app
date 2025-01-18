@@ -1,6 +1,9 @@
-import { FC, ReactNode } from "react";
-import { classes, Root } from "./Page.helper";
+import { FC, ReactNode, useContext } from "react";
+import styles from "./Page.module.css";
 import Header from "../header/Header";
+import { useTypedSelector } from "@/redux";
+import { AuthContext } from "@/utils/context/AuthContext";
+import { Box } from "@mui/material";
 
 interface PageProps {
   children: ReactNode;
@@ -12,19 +15,20 @@ interface PageProps {
 const Page: FC<PageProps> = ({
   children,
   display = "block",
-  background = "#fff",
-  justifyContent = "center",
+  background = "#f4f4f4",
+  justifyContent = "start",
   ...rest
 }) => {
+  const u = useTypedSelector((state) => state.user);
+  const { user } = useContext(AuthContext);
   return (
-    <Root
-      display={display}
-      justifyContent={justifyContent}
-      background={background}
-      className={classes.root}
+    <div
+      className={`${styles.root} ${styles.scrollbar}`}
+      style={{ display, justifyContent }}
     >
+      <Header {...(user || u.user)} />
       {children}
-    </Root>
+    </div>
   );
 };
 

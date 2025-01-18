@@ -1,0 +1,85 @@
+.wrapper {
+  width: 360px;
+  height: 100vh;
+  padding: 12px;
+  padding-top: 72px;
+  box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1),
+    4px 0 6px -4px rgba(0, 0, 0, 0.1);
+  background: #fafafa;
+  overflow-y: auto;
+  position: relative;
+}
+
+.messagesWrapper {
+  height: calc(100vh - 46px);
+  width: calc(100vw - 360px);
+  padding: 16px;
+}
+
+.scrollbar {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #093d20 #f1f1f1;
+  border-radius: 16px;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 32px;
+  border-radius: 16px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 16px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 16px;
+  border: 3px solid #f1f1f1;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+  border-radius: 16px;
+}
+
+/* Media query for small screens */
+@media (max-width: 600px) {
+  .wrapper {
+    width: 100vw;
+    transition: width 0.3s ease-in-out;
+    padding: 8px; /* Adjust padding if needed */
+    padding-top: 60px; /* Adjust top padding for smaller screen */
+  }
+
+  .collapsed {
+    width: 0px;
+    padding: 0px;
+  }
+
+  .noConversationSelectedText {
+    width: 0;
+  }
+
+  .messagesWrapper {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .conversationWriteToText {
+    display: none;
+  }
+  .conversationRecepient {
+    font-size: 12px;
+  }
+
+  .collapseIcon {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 90px;
+    left: -4px;
+    transition: translateX 0.3s ease-in-out;
+  }
+}

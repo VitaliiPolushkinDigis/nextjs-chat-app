@@ -4,19 +4,21 @@ import {
   CreateMessageParams,
   CreateUserParams,
   FetchMessagePayload,
+  Profile,
   User,
   UserCredentialsParams,
+  UserSearchParams,
+  UserWithoutPassword,
 } from "./types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const API_URL =
-  /* "http://localhost:3001/api" */ "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api";
-// "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api"; /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
+  "https://test-nest-api-production.up.railway.app/api"; /* "http://localhost:3001/api" */ /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
 const config: AxiosRequestConfig = {
   withCredentials: true,
   headers: {
     "Access-Control-Allow-Origin":
-      "https://chat-nestjs-92c46b4f7e43.herokuapp.com/api" /* "http://localhost:3001/api" */,
+      "https://test-nest-api-production.up.railway.app/api" /* "http://localhost:3001/api" */,
     "Content-Type": "application/json",
   },
 };
@@ -36,9 +38,13 @@ export const useApi = {
     return data;
   },
   async status() {
-    const { data } = await instance.get(`/auth/status`);
-
-    return data;
+    try {
+      const { data } = await instance.get(`/auth/status`);
+      return data;
+    } catch (error) {
+      console.log("error", error);
+      throw new Error(`${error}`);
+    }
   },
 };
 
@@ -115,8 +121,65 @@ export const profilesApi = createApi({
     getProfiles: builder.query<any, any>({
       query: () => `profiles`,
     }),
-    getProfile: builder.query<any, any>({
+    getProfile: builder.query<Profile, any>({
       query: (profileId: number) => `profiles/${profileId}`,
+    }),
+  }),
+});
+
+export const usersApi = createApi({
+  reducerPath: "usersApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${API_URL}`,
+    prepareHeaders(headers) {
+      return headers;
+    },
+    credentials: "include",
+  }),
+  tagTypes: ["Users"],
+  endpoints: (builder) => ({
+    getUsers: builder.query<UserWithoutPassword[], void>({
+      query: () => `users`,
+    }),
+    getUser: builder.query<UserWithoutPassword[], number>({
+      query: (id: number) => `users/${id}`,
+    }),
+    getUsersWithoutConversations: builder.query<
+      UserWithoutPassword[],
+      UserSearchParams
+    >({
+      query: (params: UserSearchParams) =>
+        `users/search?withoutConversationWithMe=${params.withoutConversationWithMe}`,
+    }),
+    findUsersWithConversationsBadge: builder.query<UserWithoutPassword[], void>(
+      {
+        query: () => `users/hasConversationsBadge`,
+      }
+    ),
+  }),
+});
+
+export const conversationsApi = createApi({
+  reducerPath: "conversationsApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${API_URL}`,
+    prepareHeaders(headers) {
+      return headers;
+    },
+    credentials: "include",
+  }),
+  tagTypes: ["Conversations"],
+  endpoints: (builder) => ({
+    postConversation: builder.mutation<
+      any,
+      { recipientId: number; message: string }
+    >({
+      query: (data: any) => ({
+        url: `conversations`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Conversations"],
     }),
   }),
 });
@@ -132,3 +195,12 @@ export const {
   useCreatePostMutation,
   useLazyGetProfilePostsQuery,
 } = postsApi;
+
+export const { usePostConversationMutation } = conversationsApi;
+
+export const {
+  useGetUserQuery,
+  useGetUsersQuery,
+  useGetUsersWithoutConversationsQuery,
+  useFindUsersWithConversationsBadgeQuery,
+} = usersApi;

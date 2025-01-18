@@ -64,10 +64,10 @@ const Customizer = (props: Props) => {
 
   const handleActiveFilterTab = (tabName: string) => {
     switch (tabName) {
-      case "logoShirt":
+      case "Apply as Pircture":
         state.isLogoTexture = !activeFilterTab[tabName];
         break;
-      case "stylishShirt":
+      case "Apply Texture on T-Shirt":
         state.isFullTexture = !activeFilterTab[tabName];
         break;
       default:

@@ -39,7 +39,9 @@ type ExcludeField<T, K extends keyof T> = {
   [P in keyof T as P extends K ? never : P]: T[P];
 };
 
-export type UserWithoutPassword = ExcludeField<User, "password">;
+export type UserWithoutPassword = ExcludeField<User, "password"> & {
+  profile?: { avatarUrl?: string; id?: number };
+};
 
 type OmitFields<T, K extends keyof T> = Required<Pick<T, Exclude<keyof T, K>>> &
   Partial<Pick<T, K>>;
@@ -72,4 +74,49 @@ export type CreateMessageParams = {
 export type UpdateMessageParams = {
   content: string;
   messageId: number;
+};
+
+export type Filter = {
+  label: string;
+  value: number | string;
+};
+
+export type Sort = {
+  label: string;
+  value: "ASC" | "DESC";
+};
+
+export type UserSearchParams = {
+  search?: string;
+  filters?: Filter[];
+  sort?: Sort[];
+  withoutConversationWithMe?: boolean;
+};
+
+export type Profile = {
+  id: number;
+  city: string;
+  country: string;
+  birthDay: string;
+  sex: string;
+  status: string;
+  avatarUrl: string;
+  user: User;
+};
+
+export type Post = {
+  id: number;
+  comments: Comment[];
+  description: string;
+  imgUrl: string;
+  likes: number;
+  subtitle: string;
+  title: string;
+  views: number;
+};
+
+export type Comment = {
+  id: number;
+  content: string;
+  author: User;
 };

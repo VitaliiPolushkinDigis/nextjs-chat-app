@@ -1,12 +1,13 @@
 import { formatRelative } from "date-fns";
-import { Box, Grid } from "@mui/material";
-import { FC, useContext, useEffect } from "react";
+import { FC, useContext, useEffect, useMemo } from "react";
 import { MessageType, User } from "@/utils/types";
 import { AuthContext } from "@/utils/context/AuthContext";
-import { useParams } from "next/navigation";
 import { useTypedSelector } from "@/redux";
+import styles from "../ConversationSidebar/ConversationSidebar.module.css";
 
-type Props = {};
+type Props = {
+  id: number;
+};
 
 type FormattedMessageProps = {
   user?: User;
@@ -17,7 +18,7 @@ export const FormattedMessage: FC<FormattedMessageProps> = ({
   message,
 }) => {
   return (
-    <Grid
+    <div
       style={{
         display: "flex",
         gap: "20px",
@@ -26,7 +27,7 @@ export const FormattedMessage: FC<FormattedMessageProps> = ({
         wordBreak: "break-all",
       }}
     >
-      <Box
+      <div
         style={{
           width: "50px",
           height: "50px",
@@ -34,8 +35,8 @@ export const FormattedMessage: FC<FormattedMessageProps> = ({
           backgroundColor: "#ee4343",
         }}
       />
-      <Box>
-        <Grid
+      <div>
+        <div
           style={{
             display: "flex",
             gap: "12px",
@@ -44,35 +45,35 @@ export const FormattedMessage: FC<FormattedMessageProps> = ({
           <span
             className="authorName"
             style={{
-              color: user?.id === message.author.id ? "#757575" : "#5E8BFF",
+              color: user?.id === message.author.id ? "#0e2317" : "#5E8BFF",
             }}
           >
             {message.author.firstName} {message.author.lastName}
           </span>
-          <span className="time">
+          <span style={{ color: "#757575" }}>
             {formatRelative(new Date(message.createdAt), new Date())}
           </span>
-        </Grid>
-        <Box>{message.content}</Box>
-      </Box>
-    </Grid>
+        </div>
+        <div>{message.content}</div>
+      </div>
+    </div>
   );
 };
 
-export const MessageContainer: FC<Props> = () => {
+export const MessageContainer: FC<Props> = ({ id }) => {
   const { user } = useContext(AuthContext);
-  const params = useParams();
-  const id = params?.id;
-  const conversationMessages = useTypedSelector(
-    (state) => state.messages.messages
+  const { messages, loading } = useTypedSelector((state) => state.messages);
+  const currentConversationMessages = useMemo(
+    () => messages.find((m) => m.id === id),
+    [messages]
   );
+  const emptyMessageList =
+    !currentConversationMessages ||
+    !currentConversationMessages?.messages.length;
 
   const formatMessages = () => {
-    const currentConversationMessages = conversationMessages.find(
-      (m) => m.id === parseInt((id as string)!)
-    );
-    if (!currentConversationMessages) {
-      return [];
+    if (emptyMessageList) {
+      return <p>There are no messages yet...</p>;
     }
 
     return currentConversationMessages?.messages.map(
@@ -86,7 +87,7 @@ export const MessageContainer: FC<Props> = () => {
 
         if (currentMessage.author.id === nextMessage.author.id) {
           return (
-            <Grid
+            <div
               style={{
                 display: "flex",
                 gap: "20px",
@@ -95,8 +96,8 @@ export const MessageContainer: FC<Props> = () => {
               }}
               key={m.id}
             >
-              <Box padding="0 0 0 70px">{m.content}</Box>
-            </Grid>
+              <div style={{ padding: "0 0 0 70px" }}>{m.content}</div>
+            </div>
           );
         }
         return <FormattedMessage key={m.id} user={user} message={m} />;
@@ -109,22 +110,25 @@ export const MessageContainer: FC<Props> = () => {
   });
 
   return (
-    <Grid
+    <div
       style={{
-        height: "calc(100% - 100px)",
+        height: "calc(100% - 65px)",
         boxSizing: "border-box",
         padding: " 10px 0",
         display: "flex",
         flexDirection: "column-reverse",
-        overflowY: "scroll",
-
+        overflowY: "auto",
+        ...(emptyMessageList
+          ? { justifyContent: "center", alignItems: "center" }
+          : {}),
         /*  &::-webkit-scrollbar {
     display: none;
   } */
       }}
+      className={styles.scrollbar}
       data-attr="messages-list"
     >
-      {formatMessages()}
-    </Grid>
+      {loading ? <p>Loading...</p> : formatMessages()}
+    </div>
   );
 };

@@ -25,7 +25,6 @@ const FilePicker = ({ file, setFile, readFile }: any) => {
           type="button"
           title="text"
           onClick={() => {
-            console.log("sdfsdfsdfsdfsdf");
             readFile("logo");
           }}
         >

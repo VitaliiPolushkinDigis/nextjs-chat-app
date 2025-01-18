@@ -1,20 +1,33 @@
-import { Grid, Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import CreateNewConversationForm from "../forms/CreateNewConversationForm/CreateNewConversationForm";
 import SimpleModal from "../modals/SimpleModal";
 import ConversationCreateBtn from "./ConversationCreateBtn/ConversationCreateBtn";
-import { useAuth } from "@/utils/hooks/useAuth";
+
 import { AuthContext } from "@/utils/context/AuthContext";
 import { useTypedSelector } from "@/redux";
-import Link from "next/link";
-import { ConversationType } from "@/utils/types";
-import { useStyles } from "./ConversationSidebar.styles";
 
-const ConversationSidebar: FC = ({}) => {
+import { ConversationType } from "@/utils/types";
+import styles from "./ConversationSidebar.module.css";
+
+import { Sidebar } from "../sidebar/Sidebar";
+import classes from "../sidebar/Sidebar.module.css";
+
+interface ConversationSidebarProps {
+  createConversation: any;
+  setSelectedConversation: (conversation: ConversationType) => void;
+  selectedConversation?: ConversationType;
+}
+
+const ConversationSidebar: FC<ConversationSidebarProps> = ({
+  createConversation,
+  selectedConversation,
+  setSelectedConversation,
+}) => {
   const [showModal, setShowModal] = useState(false);
-  const styles = useStyles();
+
   const { user } = useContext(AuthContext);
+  const [isCollapsed, setIsCollapsed] = useState<Boolean | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const { conversations } = useTypedSelector((state) => state.conversations);
 
@@ -24,60 +37,143 @@ const ConversationSidebar: FC = ({}) => {
       : conversation.creator;
   };
 
+  useEffect(() => {
+    // Function to check if the device is mobile based on window width
+    const checkSize = () => {
+      setIsMobile(window.innerWidth <= 768); // Consider 768px or adjust as needed
+    };
+
+    // Call on component mount
+    checkSize();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkSize);
+
+    // Clean up event listener on unmount
+    return () => {
+      window.removeEventListener("resize", checkSize);
+    };
+  }, []);
+
   return (
-    <Grid
-      sx={{
-        top: "0",
-        left: "0",
-        height: "100vh",
-        padding: "12px",
-        position: "fixed",
-        paddingTop: "36px",
-      }}
-      width={"360px"}
-      bgcolor={"linear-gradient(90deg, #0000003d, #00000000);"}
+    <Sidebar
+      collapsed={Boolean(selectedConversation?.id) && Boolean(isCollapsed)}
     >
+      {isMobile && (
+        <div
+          className={classes.collapseIcon}
+          onClick={() => setIsCollapsed((p) => !p)}
+          style={
+            isCollapsed === null
+              ? { display: "none" }
+              : !isCollapsed
+              ? {
+                  display: "block",
+                  transform: "translateX(200px) rotate(180deg)",
+                  transition: "translateX 0.3s ease-in-out",
+                }
+              : { display: "block", transition: "translateX 0.3s ease-in-out" }
+          }
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </div>
+      )}
+
       <SimpleModal
         open={showModal}
         handleClose={() => setShowModal(false)}
         padding="20px"
       >
-        <CreateNewConversationForm />
+        <CreateNewConversationForm
+          onClose={() => setShowModal(false)}
+          createConversation={createConversation}
+        />
       </SimpleModal>
-      <h1>ConversationSidebar</h1>
-      <Grid display="flex" justifyContent={"flex-end"}>
-        <ConversationCreateBtn showModal={() => setShowModal(true)} />
-      </Grid>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h1>Your Chats</h1>
+        <div>
+          <ConversationCreateBtn showModal={() => setShowModal(true)} />
+        </div>
+      </div>
+
       {conversations.map((conversation) => (
-        <Link
-          style={{ textDecoration: "none" }}
+        <div
+          style={{
+            ...(selectedConversation?.id === conversation.id
+              ? {
+                  backgroundSize: "cover",
+                  backgroundImage:
+                    "url(https://web.telegram.org/a/chat-bg-br.f34cc96fbfb048812820.png)",
+                }
+              : {}),
+            marginBottom: "8px",
+            borderRadius: "16px",
+            cursor: "pointer",
+          }}
           key={conversation.id}
-          href={`/conversations/${conversation.id}`}
+          onClick={() => {
+            setSelectedConversation(conversation);
+            setIsCollapsed(true);
+          }}
         >
-          <Box className={styles.conversations}>
-            <Box
-              sx={{
+          <div className={styles.conversations}>
+            <div
+              style={{
                 borderRadius: "50%",
                 width: "36px",
                 height: "36px",
-                background: "#3a9",
+                backgroundSize: "cover",
+                backgroundImage:
+                  "url(https://web.telegram.org/a/chat-bg-br.f34cc96fbfb048812820.png)",
+                marginRight: "8px",
               }}
               data-attr="avatar"
-            ></Box>
-            <Box>
-              <Typography>
-                Write to:{" "}
+            ></div>
+            <div>
+              <div
+                style={{
+                  ...(selectedConversation?.id === conversation.id
+                    ? { color: "white", fontWeight: 600 }
+                    : {}),
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2, // Limit to 2 lines
+                  WebkitBoxOrient: "vertical", // Vertical orientation for truncation
+                  overflow: "hidden", // Hide overflow
+                  textOverflow: "ellipsis", // Add ellipsis
+                }}
+                className={classes.conversationRecepient}
+              >
+                <div className={classes.conversationWriteToText}>
+                  Write to:{" "}
+                </div>
                 {`${getDisplayUser(conversation).firstName} ${
                   getDisplayUser(conversation).lastName
                 }`}
-              </Typography>
-              <Typography>Creator: {conversation.creator.email}</Typography>
-              <Typography>Recipient: {conversation.recipient.email}</Typography>
-            </Box>
-          </Box>
-        </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       ))}
-    </Grid>
+    </Sidebar>
   );
 };
 

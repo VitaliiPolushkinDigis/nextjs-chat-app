@@ -1,6 +1,5 @@
 import { useApi } from "@/utils/api";
 import { UserCredentialsParams } from "@/utils/types";
-import { Button, Grid, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,6 +10,8 @@ import { TextFieldComponent } from "../../components/TextFieldComponent/TextFiel
 import { useAppDispatch, useTypedSelector } from "@/redux";
 import { getAuth, loginUser } from "@/redux/slices/userSlice";
 import { AuthContext } from "@/utils/context/AuthContext";
+import styles from "../../components/forms/LoginForm/LoginForm.module.css";
+import { validationSchemaLogin } from "@/components/forms/LoginForm/LoginForm.helper";
 
 interface LoginFormProps {}
 
@@ -24,9 +25,9 @@ const LoginForm: FC<LoginFormProps> = () => {
   const formik = useFormik({
     initialValues: { password: "", email: "" },
     enableReinitialize: true,
-    validateOnChange: true,
-    validateOnBlur: false,
-    /*  validationSchema: validationSchemaAccountBox, */
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: validationSchemaLogin,
     onSubmit: (values, actions) => {
       submitForm(values);
       /*  actions.resetForm({}); */
@@ -50,10 +51,7 @@ const LoginForm: FC<LoginFormProps> = () => {
         const getStatus = await dispatch(getAuth());
         const status = await useApi.status();
         updateUser(status);
-        router.push(`/profile/${getStatus.payload.id}`);
-
-        /*  
-      router.push("/conversations"); */
+        router.push(`/profile/${(getStatus.payload as any).id}`);
       } else {
         addToast("Login Unsuccessfully", { appearance: "error" });
       }
@@ -64,67 +62,79 @@ const LoginForm: FC<LoginFormProps> = () => {
   };
 
   return (
-    <form
-      /* className={styles.registerForm} */
-      onSubmit={handleSubmit}
-      data-attr="form"
-    >
-      <Grid>
-        <TextFieldComponent
-          placeholder="Your email"
-          name="email"
-          value={values.email ? values.email : ""}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          setFieldTouched={setFieldTouched}
-          errorText={errors.email}
-          fullWidth
-          helperText
-          label="Your Email"
-          dataAttr="email"
-        />
-      </Grid>
-      <Grid>
-        <TextFieldComponent
-          placeholder="Your password"
-          name="password"
-          value={values.password ? values.password : ""}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          setFieldTouched={setFieldTouched}
-          errorText={errors.password}
-          fullWidth
-          helperText
-          label="Your password"
-          dataAttr="password"
-        />
-      </Grid>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        fullWidth
-        data-attr="submit"
-      >
-        Submit
-      </Button>
-      <Button
-        type="reset"
-        onClick={() => resetForm()}
-        variant="outlined"
-        color="info"
-        size="large"
-        fullWidth
-      >
-        Reset
-      </Button>
-      <Typography>
-        <Link data-attr="register-link" href="/register">
-          Dont have an account? Register.
-        </Link>
-      </Typography>
-    </form>
+    <div className={styles.wrapper}>
+      <form className={styles.form} onSubmit={handleSubmit} data-attr="form">
+        <div
+          style={{
+            fontSize: "22px",
+            marginBottom: "16px",
+            color: "primary.main",
+          }}
+        >
+          Welcome! Login with your email and password
+        </div>
+        <div>
+          <TextFieldComponent
+            placeholder="Your email"
+            name="email"
+            value={values.email ? values.email : ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            setFieldTouched={setFieldTouched}
+            errorText={errors.email}
+            fullWidth
+            helperText
+            label="Your Email"
+            dataAttr="email"
+          />
+        </div>
+        <div>
+          <TextFieldComponent
+            placeholder="Your password"
+            name="password"
+            value={values.password ? values.password : ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            setFieldTouched={setFieldTouched}
+            errorText={errors.password}
+            fullWidth
+            label="Your password"
+            dataAttr="password"
+            type="password"
+          />
+        </div>
+        <div className={styles.btnsWrapper}>
+          <button
+            className={`${styles.btn} ${styles.submitBtn}`}
+            type="submit"
+            color="primary"
+            data-attr="submit"
+            style={{ marginRight: "16px" }}
+          >
+            Submit
+          </button>
+          <button
+            type="reset"
+            className={`${styles.btn}`}
+            onClick={() => resetForm()}
+          >
+            Reset
+          </button>
+        </div>
+        <p
+          style={{
+            marginTop: "16px",
+            textAlign: "center",
+            color: "primary.main",
+            textDecoration: "underline",
+          }}
+        >
+          <Link data-attr="register-link" href="/register">
+            Dont have an account? Register.
+          </Link>
+        </p>
+      </form>
+    </div>
   );
 };
 

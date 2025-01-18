@@ -49,7 +49,7 @@ const PeerPage: FC<PeerProps> = () => {
 
   useEffect(() => {
     socket.current = io(
-      /* "http://localhost:3001" */ "https://chat-nestjs-92c46b4f7e43.herokuapp.com",
+      /* "http://localhost:3001" */ "https://test-nest-api-production.up.railway.app",
       {
         reconnectionAttempts: 3,
         withCredentials: true,
@@ -137,12 +137,12 @@ const PeerPage: FC<PeerProps> = () => {
   }
 
   return (
-    <Box component={"section"} minHeight={"100vh"}>
-      <Page>
+    <Page>
+      <div style={{ padding: "20px" }}>
         user: {user?.firstName}
         your ID: {yourID}
         <div>
-          My video:{" "}
+          My video:
           <video
             playsInline
             muted
@@ -153,10 +153,9 @@ const PeerPage: FC<PeerProps> = () => {
           />
         </div>
         <div>
-          REMOTE:{" "}
+          REMOTE:
           <video
             playsInline
-            muted
             width={400}
             height={400}
             ref={partnerVideo}
@@ -174,8 +173,8 @@ const PeerPage: FC<PeerProps> = () => {
           );
         })}
         <div> {incomingCall}</div>
-      </Page>
-    </Box>
+      </div>
+    </Page>
   );
 };
 

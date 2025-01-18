@@ -1,13 +1,17 @@
-import { Button, Typography } from "@mui/material";
 import { useFormik } from "formik";
-import { FC } from "react";
-import { useDispatch } from "react-redux";
-import { TextFieldComponent } from "../../TextFieldComponent/TextFieldComponent";
-import { classes } from "./CreateNewConversationForm.helper";
-import { addConversation } from "@/redux/slices/conversationSlice";
+import { FC, useState } from "react";
+import { useGetUsersWithoutConversationsQuery } from "@/utils/api";
+import { useToasts } from "react-toast-notifications";
 
-const CreateNewConversationForm: FC = () => {
-  const dispatch = useDispatch();
+interface CreateNewConversationFormProps {
+  onClose: () => void;
+  createConversation: any;
+}
+
+const CreateNewConversationForm: FC<CreateNewConversationFormProps> = ({
+  onClose,
+  createConversation,
+}) => {
   const {
     handleBlur,
     handleSubmit,
@@ -28,67 +32,67 @@ const CreateNewConversationForm: FC = () => {
     },
   });
 
-  const submitForm = async (/* data: CreateUserParams */) => {
-    try {
-      dispatch(
-        addConversation({
-          id: 1,
-          creator: { id: 1, email: "", firstName: "", lastName: "" },
-          recipient: { id: 1, email: "", firstName: "", lastName: "" },
-          createdAt: new Date().toString(),
-        })
-      );
+  const { data, isLoading } = useGetUsersWithoutConversationsQuery({
+    withoutConversationWithMe: true,
+  });
+  const [selectedUserForNewConversation, setSelectedUserForNewConversation] =
+    useState<number | undefined>();
+  const { addToast } = useToasts();
 
-      /*      await postRegisterUser(data).then(() => {
-          addToast('Registered Successfully', { appearance: 'success' });
-        }); */
+  const submitForm = async () => {
+    try {
+      if (selectedUserForNewConversation) {
+        createConversation({
+          recipientId: selectedUserForNewConversation,
+          message: "test",
+        }).then(() => {
+          addToast("Created!");
+          onClose();
+        });
+      }
     } catch (error) {
       console.log(error);
-      /*    addToast('Register Unsuccessfully', { appearance: 'error' }); */
     }
   };
 
   return (
-    <form style={{ width: "100%" }} onSubmit={handleSubmit}>
-      <Typography
-        className={classes.title}
-        id="modal-modal-title"
-        variant="h6"
-        component="h2"
+    <div>
+      <h3>Select the user and start a conversation</h3>
+
+      <form
+        style={{ width: "100%", marginTop: "16px" }}
+        onSubmit={handleSubmit}
       >
-        Create new Conversation
-      </Typography>
-      <Typography sx={{ mt: 2 }}>Person</Typography>
-      <TextFieldComponent
-        placeholder="Person Name"
-        name="name"
-        value={values.name ? values.name : ""}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        setFieldTouched={setFieldTouched}
-        errorText={errors.name}
-        fullWidth
-        helperText
-        label="Person Name"
-      />
-      <Typography sx={{ mt: 2 }}>Message</Typography>
-      <TextFieldComponent
-        placeholder="Message"
-        name="message"
-        value={values.message ? values.message : ""}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        setFieldTouched={setFieldTouched}
-        errorText={errors.message}
-        fullWidth
-        helperText
-        label="Your Message"
-        multiline
-      />
-      <Button type="submit" sx={{ mt: 2 }} variant="contained" color="primary">
-        Create and send
-      </Button>
-    </form>
+        <div style={{ overflowY: "auto", maxHeight: "70vh" }}>
+          {data
+            ? data.map((u) => (
+                <p
+                  style={{
+                    cursor: "pointer",
+                    marginBottom: "16px",
+                    background:
+                      selectedUserForNewConversation === u.id
+                        ? "#378158"
+                        : "transparent",
+                    textTransform: "capitalize",
+                  }}
+                  key={u.id}
+                  onClick={() => setSelectedUserForNewConversation(u.id)}
+                >{`${u.firstName} ${u.lastName}`}</p>
+              ))
+            : "Loading..."}
+        </div>
+
+        <button
+          className="btn submitBtn"
+          type="submit"
+          color="primary"
+          style={{ marginTop: "16px" }}
+        >
+          Create and send
+        </button>
+      </form>
+    </div>
   );
 };
 
