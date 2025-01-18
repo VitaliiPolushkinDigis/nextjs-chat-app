@@ -2,8 +2,12 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ["fakestoreapi.com"],
-    formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
   typescript: {
     ignoreBuildErrors: true,
