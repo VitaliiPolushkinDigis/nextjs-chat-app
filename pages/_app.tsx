@@ -23,9 +23,12 @@ const theme = createTheme({
   },
 });
 export default function App({ Component, ...rest }: AppProps) {
+  console.log("...rest", rest);
+
   const router = useRouter();
   const { store } = wrapper.useWrappedStore(rest);
   const [user, updateUser] = useState<User>();
+  const props = { ...rest.pageProps, user };
 
   useEffect(() => {
     console.log("------------_app.tsx");
@@ -36,7 +39,7 @@ export default function App({ Component, ...rest }: AppProps) {
       },
       (err) => {
         console.log("err", err);
-        router.push("/login");
+        // router.push("/login");
       }
     );
   }, []);
@@ -50,7 +53,7 @@ export default function App({ Component, ...rest }: AppProps) {
             value={{ user, updateUser: (u: User) => updateUser(u) }}
           >
             <ToastProvider autoDismiss autoDismissTimeout={3500}>
-              <Component {...(rest.pageProps, user)} />
+              <Component {...props} />
             </ToastProvider>
           </AuthContext.Provider>
         </ThemeProvider>
