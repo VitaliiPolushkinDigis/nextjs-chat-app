@@ -8,7 +8,6 @@ import { useToasts } from "react-toast-notifications";
 import { TextFieldComponent } from "../../components/TextFieldComponent/TextFieldComponent";
 
 import { useAppDispatch, useTypedSelector } from "@/redux";
-import { getAuth, loginUser } from "@/redux/slices/userSlice";
 import { AuthContext } from "@/utils/context/AuthContext";
 import styles from "../../components/forms/LoginForm/LoginForm.module.css";
 import { validationSchemaLogin } from "@/components/forms/LoginForm/LoginForm.helper";

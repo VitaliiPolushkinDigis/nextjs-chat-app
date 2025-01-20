@@ -1,4 +1,9 @@
-import { getAuthUser, postLoginUser, postRegisterUser } from "@/utils/api";
+import {
+  getAuthUser,
+  postLoginUser,
+  postRegisterUser,
+  useApi,
+} from "@/utils/api";
 import { CreateUserParams, User, UserCredentialsParams } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -33,8 +38,8 @@ export const loginUser = createAsyncThunk(
 );
 export const getAuth = createAsyncThunk<User, string | undefined>(
   "user/getAuth",
-  async (cookies) => {
-    const response = await getAuthUser(cookies);
+  async (/* cookies */) => {
+    const response = await useApi.status(); /* getAuthUser(cookies) */
 
     return response.data;
   }

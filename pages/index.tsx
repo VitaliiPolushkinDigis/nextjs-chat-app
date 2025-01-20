@@ -7,8 +7,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home(props: any) {
   console.log("props", props);
-  const string = props.header ? JSON.stringify(props.header) : "no headers";
-  console.log("string", string);
 
   return (
     <>
@@ -30,7 +28,6 @@ export default function Home(props: any) {
               Get started by editing&nbsp;
               <code className={styles.code}>pages/index.tsx</code>
             </p>
-            <h6>{string}</h6>
             <div>
               <a
                 href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
@@ -123,45 +120,4 @@ export default function Home(props: any) {
       </Page>
     </>
   );
-}
-
-export async function getServerSideProps(ctx: any) {
-  console.log("hellooooooooooooo");
-
-  //try catch
-  try {
-    const res = await fetch(
-      "https://test-nest-api-production.up.railway.app/api/auth/status" /* "http://localhost:3001/api/auth/status" */,
-      {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin":
-            "https://test-nest-api-production.up.railway.app" /* "http://localhost:3001" */,
-          "Content-Type": "application/json",
-          Cookie: ctx.req.headers.cookie,
-        },
-        credentials: "include",
-      }
-    );
-
-    // Assuming you have an API route for status
-    const data = await res.json();
-
-    console.log("-------------res status", data);
-    console.log("-------------ctx.req.headers.cookie", ctx.req.headers);
-
-    return {
-      props: { /* ...data, */ header: ctx.req.headers },
-    };
-  } catch (error) {
-    console.error(error);
-
-    // Handle errors, maybe redirect to an error page
-    return {
-      redirect: {
-        destination: "/error",
-        permanent: false,
-      },
-    };
-  }
 }

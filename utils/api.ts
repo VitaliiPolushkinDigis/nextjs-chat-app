@@ -20,13 +20,90 @@ const config: AxiosRequestConfig = {
     "Access-Control-Allow-Origin":
       /* "http://localhost:3001/api" */ "https://test-nest-api-production.up.railway.app/api",
     "Content-Type": "application/json",
+    Authorization: `Bearer ${getAccessToken()}`,
   },
 };
 
+function getAccessToken() {
+  return typeof window !== "undefined"
+    ? localStorage.getItem("access_token")
+    : null;
+}
+
+// Function to get the refresh token from cookies (optional for refreshing)
+function getRefreshToken() {
+  return typeof window !== "undefined"
+    ? localStorage.getItem("refresh_token")
+    : null;
+}
 const instance = axios.create({
   baseURL: API_URL,
   ...config,
 });
+
+instance.interceptors.request.use(
+  (config) => {
+    const accessToken = getAccessToken();
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// TODO: Response interceptor (handle token refresh logic)
+instance.interceptors.response.use(
+  (response) => response, // Return the response if there's no error
+  async (error) => {
+    // TODO: Handle token refresh
+    return Promise.reject(error);
+  }
+);
+
+/* instance.interceptors.response.use(
+  (response) => response, // Return the response if no error
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If we get a 401 error (Unauthorized) and the request hasn't been retried yet
+    if (
+      typeof window !== "undefined" &&
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true; // Set a flag to prevent infinite loops
+
+      // Check if the refresh token is available
+      const refreshToken = getRefreshToken(); // Retrieve from storage or cookies
+      if (!refreshToken) {
+        // If no refresh token, prevent retry and handle it as an unauthenticated error
+        console.error("No refresh token available, please log in.");
+        // You can redirect to the login page or show an error message to the user
+        return Promise.reject(error);
+      }
+
+      // Refresh the access token
+      try {
+        const newAccessToken = await useApi.refreshToken();
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        // Retry the original request with the new token
+        return instance(originalRequest);
+      } catch (refreshError) {
+        console.error("Token refresh failed", refreshError);
+        // Handle failed token refresh logic here (e.g., logout, show message)
+        return Promise.reject(refreshError);
+      }
+    }
+
+    // If not a token expiration error, throw the error as is
+    return Promise.reject(error);
+  }
+); */
 
 export const useApi = {
   async register(dto: CreateUserParams) {
@@ -35,21 +112,55 @@ export const useApi = {
   },
   async login(dto: UserCredentialsParams) {
     const { data } = await instance.post(`/auth/login`, dto);
+
+    localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("refresh_token", data.refresh_token);
+
     return data;
   },
   async status() {
     try {
-      console.log("--------called useApi.status");
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem("access_token")
+          : null;
 
-      const { data } = await instance.get(`/auth/status`);
+      if (!token) return;
+
+      const { data } = await instance.get(`/auth/status`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       return data;
     } catch (error) {
       console.log("error", error);
-      throw new Error(`${error}`);
+      // throw new Error(`${error}`);
+      return;
     }
   },
   async logout() {
     const res = await instance.post(`/auth/logout`);
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+
+    return res;
+  },
+  async refreshToken() {
+    try {
+      const refreshToken = getRefreshToken();
+      const { data } = await instance.post(`/auth/refresh-token`, {
+        refresh_token: refreshToken,
+      });
+
+      // Store the new access token in localStorage
+      localStorage.setItem("access_token", data.access_token);
+      return data.access_token;
+    } catch (error) {
+      console.error("Refresh token error", error);
+      throw new Error("Failed to refresh token");
+    }
   },
 };
 
@@ -93,6 +204,12 @@ export const postsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_URL}`,
     prepareHeaders(headers) {
+      const token = getAccessToken();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        console.log("Did not passed Authorization Bearer");
+      }
       return headers;
     },
     credentials: "include",
@@ -119,6 +236,12 @@ export const profilesApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_URL}`,
     prepareHeaders(headers) {
+      const token = getAccessToken();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        console.log("Did not passed Authorization Bearer");
+      }
       return headers;
     },
     credentials: "include",
@@ -138,6 +261,12 @@ export const usersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_URL}`,
     prepareHeaders(headers) {
+      const token = getAccessToken();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        console.log("Did not passed Authorization Bearer");
+      }
       return headers;
     },
     credentials: "include",
@@ -170,6 +299,12 @@ export const conversationsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_URL}`,
     prepareHeaders(headers) {
+      const token = getAccessToken();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        console.log("Did not passed Authorization Bearer");
+      }
       return headers;
     },
     credentials: "include",

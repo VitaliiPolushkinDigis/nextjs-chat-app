@@ -23,23 +23,21 @@ const theme = createTheme({
   },
 });
 export default function App({ Component, ...rest }: AppProps) {
-  console.log("...rest", rest);
-
   const router = useRouter();
   const { store } = wrapper.useWrappedStore(rest);
   const [user, updateUser] = useState<User>();
   const props = { ...rest.pageProps, user };
 
   useEffect(() => {
-    console.log("------------_app.tsx");
-
     useApi.status().then(
       (d) => {
+        if (!d) {
+          return router.push("/login");
+        }
         updateUser(d);
       },
       (err) => {
-        console.log("err", err);
-        // router.push("/login");
+        console.log("errooooooorrrrr", err);
       }
     );
   }, []);
