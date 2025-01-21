@@ -57,21 +57,6 @@ const Header: FC<HeaderProps> = (props) => {
           />
         </svg>
       </div>
-      {/*  <Link
-        style={{
-          ...linkStyles,
-          display: "flex",
-          alignItems: "center",
-          fontSize: "58px",
-          fontFamily: "fantasy",
-          color: "#378158",
-        }}
-        href="/"
-      >
-        <Logo width={"48px"} />
-
-        <div>Facegram</div>
-      </Link> */}
 
       {
         <div

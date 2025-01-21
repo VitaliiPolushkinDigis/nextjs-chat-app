@@ -48,34 +48,43 @@ const PeerPage: FC<PeerProps> = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    socket.current = io(process.env.NEXT_PUBLIC_URL, {
-      reconnectionAttempts: 3,
-      withCredentials: true,
-    }).connect();
+    if (localStorage) {
+      socket.current = io(process.env.NEXT_PUBLIC_URL, {
+        reconnectionAttempts: 3,
+        withCredentials: true,
+        transports: ["websocket", "polling", "flashsocket"], // Specify WebSocket as transport
+        extraHeaders: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        auth: {
+          token: `Bearer ${localStorage.getItem("access_token") || ""}`,
+        },
+      }).connect();
 
-    console.log("here0");
+      console.log("here0");
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStream(stream);
-        if (userVideo.current) {
-          userVideo.current.srcObject = stream;
-        }
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          setStream(stream);
+          if (userVideo.current) {
+            userVideo.current.srcObject = stream;
+          }
+        });
+
+      socket.current.on("yourID", (id: string) => {
+        setYourID(id);
+      });
+      socket.current.on("allUsers", (users: any) => {
+        setUsers(users);
       });
 
-    socket.current.on("yourID", (id: string) => {
-      setYourID(id);
-    });
-    socket.current.on("allUsers", (users: any) => {
-      setUsers(users);
-    });
-
-    socket.current.on("hey", (data: any) => {
-      setReceivingCall(true);
-      setCaller(data.from);
-      setCallerSignal(data.signal);
-    });
+      socket.current.on("hey", (data: any) => {
+        setReceivingCall(true);
+        setCaller(data.from);
+        setCallerSignal(data.signal);
+      });
+    }
   }, []);
 
   function callPeer(id: string) {
