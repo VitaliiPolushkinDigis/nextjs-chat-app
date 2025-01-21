@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import { FC } from "react";
 
-import { useApi } from "@/utils/api";
+import { useApi, useRegisterMutation } from "@/utils/api";
 import { CreateUserParams } from "@/utils/types";
 import Link from "next/link";
 import { useToasts } from "react-toast-notifications";
@@ -26,8 +26,8 @@ const RegisterForm: FC<RegisterFormProps> = () => {
       lastName: "",
     },
     enableReinitialize: true,
-    validateOnChange: true,
-    validateOnBlur: false,
+    validateOnChange: false,
+    validateOnBlur: true,
     validationSchema: validationSchemaRegister,
     onSubmit: (values, actions) => {
       const { repeatPassword, ...dataToSend } = values;
@@ -43,16 +43,23 @@ const RegisterForm: FC<RegisterFormProps> = () => {
     handleChange,
     errors,
     resetForm,
+    touched,
   } = formik;
+
+  const [register, { isLoading }] = useRegisterMutation();
 
   const submitForm = async (data: CreateUserParams) => {
     try {
-      await useApi.register(data).then(() => {
+      const res = await register(data).unwrap();
+      console.log("res", res);
+      if (res.id) {
         addToast("Registered Successfully", { appearance: "success" });
         router.push("/login");
-      });
+      }
     } catch (error: any) {
-      addToast(error.response.data.message, { appearance: "error" });
+      console.log("error", error);
+
+      addToast(error.data.message, { appearance: "error" });
     }
   };
 
@@ -81,6 +88,8 @@ const RegisterForm: FC<RegisterFormProps> = () => {
             dataAttr="email"
             label="Your Email"
             helperText
+            touched={touched.email}
+            disabled={isLoading}
           />
         </div>
         <div style={{ display: "flex" }}>
@@ -96,6 +105,8 @@ const RegisterForm: FC<RegisterFormProps> = () => {
               fullWidth
               dataAttr="firstName"
               label="Your First Name"
+              touched={touched.firstName}
+              disabled={isLoading}
             />
           </div>
           <div>
@@ -110,6 +121,8 @@ const RegisterForm: FC<RegisterFormProps> = () => {
               fullWidth
               dataAttr="lastName"
               label="Your Last Name"
+              touched={touched.lastName}
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -125,7 +138,10 @@ const RegisterForm: FC<RegisterFormProps> = () => {
             fullWidth
             label="Your password"
             dataAttr="password"
+            helperText
             type="password"
+            touched={touched.password}
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -139,12 +155,16 @@ const RegisterForm: FC<RegisterFormProps> = () => {
             errorText={errors.repeatPassword}
             fullWidth
             label="Repeat your password"
+            helperText
             dataAttr="password-repeat"
             type="password"
+            touched={touched.repeatPassword}
+            disabled={isLoading}
           />
         </div>
         <div className={styles.btnsWrapper}>
           <button
+            disabled={isLoading}
             className={`${styles.btn} ${styles.submitBtn}`}
             data-attr="submit"
             type="submit"
@@ -154,6 +174,7 @@ const RegisterForm: FC<RegisterFormProps> = () => {
             Submit
           </button>
           <button
+            disabled={isLoading}
             type="reset"
             onClick={() => resetForm()}
             className={`${styles.btn}`}

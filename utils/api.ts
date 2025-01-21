@@ -162,6 +162,88 @@ export const useApi = {
   },
 };
 
+export const authApi = createApi({
+  reducerPath: "authApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${process.env.NEXT_PUBLIC_URL}/api`,
+    prepareHeaders: (headers) => {
+      const token = getAccessToken();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+    credentials: "include", // Include cookies
+  }),
+  tagTypes: ["Auth"], // Tag to handle cache invalidation if needed
+  endpoints: (builder) => ({
+    register: builder.mutation<any, CreateUserParams>({
+      query: (dto) => ({
+        url: "auth/register",
+        method: "POST",
+        body: dto,
+      }),
+    }),
+    login: builder.mutation<
+      { access_token: string; refresh_token: string },
+      UserCredentialsParams
+    >({
+      query: (dto) => ({
+        url: "auth/login",
+        method: "POST",
+        body: dto,
+      }),
+      async onQueryStarted(dto, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("refresh_token", data.refresh_token);
+        } catch (error) {
+          console.error("Login failed:", error);
+        }
+      },
+    }),
+    status: builder.query<any, void>({
+      query: () => ({
+        url: "auth/status",
+        method: "GET",
+      }),
+    }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: "auth/logout",
+        method: "POST",
+      }),
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+        } catch (error) {
+          console.error("Logout failed:", error);
+        }
+      },
+    }),
+    refreshToken: builder.mutation<any, void>({
+      query: () => ({
+        url: "auth/refresh-token",
+        method: "POST",
+        body: {
+          refresh_token: getRefreshToken(),
+        },
+      }),
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          localStorage.setItem("access_token", data.access_token);
+        } catch (error) {
+          console.error("Token refresh failed:", error);
+        }
+      },
+    }),
+  }),
+});
+
 //use instance instead of directly axios
 export const postRegisterUser = async (data: CreateUserParams) =>
   instance.post(`${API_URL}/auth/register`, data, config);
@@ -343,3 +425,12 @@ export const {
   useGetUsersWithoutConversationsQuery,
   useFindUsersWithConversationsBadgeQuery,
 } = usersApi;
+
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useStatusQuery,
+  useLazyStatusQuery,
+  useLogoutMutation,
+  useRefreshTokenMutation,
+} = authApi;

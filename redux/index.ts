@@ -4,7 +4,13 @@ import userSlice from "./slices/userSlice";
 import conversationsSlice from "./slices/conversationSlice";
 import { createWrapper } from "next-redux-wrapper";
 import messagesSlice from "./slices/messageSlice";
-import { conversationsApi, postsApi, profilesApi, usersApi } from "@/utils/api";
+import {
+  authApi,
+  conversationsApi,
+  postsApi,
+  profilesApi,
+  usersApi,
+} from "@/utils/api";
 const { serialize, deserialize } = require("json-immutable");
 
 export function makeStore() {
@@ -17,6 +23,7 @@ export function makeStore() {
       [profilesApi.reducerPath]: profilesApi.reducer,
       [usersApi.reducerPath]: usersApi.reducer,
       [conversationsApi.reducerPath]: conversationsApi.reducer,
+      [authApi.reducerPath]: authApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat([
@@ -24,6 +31,7 @@ export function makeStore() {
         postsApi.middleware,
         usersApi.middleware,
         conversationsApi.middleware,
+        authApi.middleware,
       ]),
   });
 }

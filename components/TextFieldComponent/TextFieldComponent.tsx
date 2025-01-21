@@ -68,6 +68,7 @@ interface TextFieldProps {
   buttonProps?: SideButtonProps;
   inputRef?: React.Ref<HTMLInputElement>;
   dataAttr?: string;
+  touched?: boolean;
 }
 
 // eslint-disable-next-line react/display-name
@@ -98,6 +99,7 @@ export const TextFieldComponent = forwardRef<HTMLInputElement, TextFieldProps>(
       buttonProps,
       inputRef,
       dataAttr,
+      touched,
     },
     ref
   ) => {
@@ -179,11 +181,6 @@ export const TextFieldComponent = forwardRef<HTMLInputElement, TextFieldProps>(
       [type]
     );
 
-    const labelValue = useMemo(
-      () => (helperText ? "" : errorText || label),
-      [errorText, label, helperText]
-    );
-
     const onBlurHandler = (
       event: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>
     ) => {
@@ -210,7 +207,7 @@ export const TextFieldComponent = forwardRef<HTMLInputElement, TextFieldProps>(
             disabled ? styles.disabled : ""
           }`}
         >
-          {label && <label className={styles.label}>{labelValue}</label>}
+          {label && <label className={styles.label}>{label}</label>}
           <input
             disabled={disabled}
             name={name}
@@ -235,7 +232,7 @@ export const TextFieldComponent = forwardRef<HTMLInputElement, TextFieldProps>(
               {AdornmentBlock.endAdornment}
             </div>
           )}
-          {helperText && errorText && (
+          {helperText && errorText && touched && (
             <div className={styles.helperText}>{errorText}</div>
           )}
         </div>

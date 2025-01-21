@@ -1,4 +1,4 @@
-import { useApi } from "@/utils/api";
+import { useApi, useLazyStatusQuery, useLoginMutation } from "@/utils/api";
 import { UserCredentialsParams } from "@/utils/types";
 import { useFormik } from "formik";
 import Link from "next/link";
@@ -15,7 +15,8 @@ interface LoginFormProps {}
 const LoginForm: FC<LoginFormProps> = () => {
   const { addToast } = useToasts();
   const { updateUser } = useContext(AuthContext);
-
+  const [login, { isLoading }] = useLoginMutation();
+  const [getStatus] = useLazyStatusQuery();
   const router = useRouter();
   const formik = useFormik({
     initialValues: { password: "", email: "" },
@@ -36,23 +37,22 @@ const LoginForm: FC<LoginFormProps> = () => {
     handleChange,
     errors,
     resetForm,
+    touched,
   } = formik;
 
   const submitForm = async (values: UserCredentialsParams) => {
     try {
-      const login = await useApi.login(values);
-      console.log("----------login", login, login === "OK");
+      const { access_token } = await login(values).unwrap();
 
-      if (login) {
+      if (access_token) {
         addToast("Login Successfully", { appearance: "success" });
 
-        const status = await useApi.status();
+        const { data } = await getStatus();
 
-        updateUser(status);
-        router.push(`/profile/${status.id}`);
+        updateUser(data);
+        router.push(`/profile/${data.id}`);
       } else {
         addToast("Login Unsuccessfully", { appearance: "error" });
-        console.log("ERRRRRRR,", login);
       }
     } catch (error) {
       console.error("ERRORORORO", error);
@@ -78,13 +78,18 @@ const LoginForm: FC<LoginFormProps> = () => {
             name="email"
             value={values.email ? values.email : ""}
             onChange={handleChange}
-            onBlur={handleBlur}
+            onBlur={(e) => {
+              handleBlur(e);
+              setFieldTouched("email", true);
+            }}
             setFieldTouched={setFieldTouched}
             errorText={errors.email}
             fullWidth
             helperText
             label="Your Email"
             dataAttr="email"
+            touched={touched.email}
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -93,17 +98,24 @@ const LoginForm: FC<LoginFormProps> = () => {
             name="password"
             value={values.password ? values.password : ""}
             onChange={handleChange}
-            onBlur={handleBlur}
+            onBlur={(e) => {
+              handleBlur(e);
+              setFieldTouched("password", true);
+            }}
             setFieldTouched={setFieldTouched}
             errorText={errors.password}
             fullWidth
+            helperText
             label="Your password"
             dataAttr="password"
             type="password"
+            touched={touched.password}
+            disabled={isLoading}
           />
         </div>
         <div className={styles.btnsWrapper}>
           <button
+            disabled={isLoading}
             className={`${styles.btn} ${styles.submitBtn}`}
             type="submit"
             color="primary"
@@ -113,6 +125,7 @@ const LoginForm: FC<LoginFormProps> = () => {
             Submit
           </button>
           <button
+            disabled={isLoading}
             type="reset"
             className={`${styles.btn}`}
             onClick={() => resetForm()}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import styles from "./Header.module.css";
-import { useApi } from "@/utils/api";
+import { useLogoutMutation } from "@/utils/api";
 
 interface HeaderProps {
   id?: number;
@@ -15,11 +15,12 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = (props) => {
   const router = useRouter();
+  const [logout, { isLoading }] = useLogoutMutation();
 
   const [isMenuOpen, setIsOpenMenu] = useState(false);
 
   const handleLoginOut = async () => {
-    const logout = await useApi.logout().then((res) => {
+    await logout().then((res) => {
       console.log("logout, component", res);
 
       router.push("/login");
@@ -113,15 +114,20 @@ const Header: FC<HeaderProps> = (props) => {
           <Link style={{ marginRight: "50px", ...linkStyles }} href="/peer">
             Video Chat:(in dev)
           </Link>
-          {/* <Box style={linkStyles}>{props?.firstName}</Box> */}
-          <Box>
-            <Button
+          <div>
+            <button
+              disabled={isLoading}
               onClick={handleLoginOut}
-              sx={{ textTransform: "capitalize", ...linkStyles, color: "grey" }}
+              className="btn submitBtn"
+              style={{
+                textTransform: "capitalize",
+                ...linkStyles,
+                color: "grey",
+              }}
             >
               {props?.id ? "Logout" : "Login"}
-            </Button>
-          </Box>
+            </button>
+          </div>
         </div>
       }
     </div>
