@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import { FC, useContext } from "react";
 import { useToasts } from "react-toast-notifications";
 import { TextFieldComponent } from "../../components/TextFieldComponent/TextFieldComponent";
-
-import { useAppDispatch, useTypedSelector } from "@/redux";
 import { AuthContext } from "@/utils/context/AuthContext";
 import styles from "../../components/forms/LoginForm/LoginForm.module.css";
 import { validationSchemaLogin } from "@/components/forms/LoginForm/LoginForm.helper";
@@ -16,8 +14,6 @@ interface LoginFormProps {}
 
 const LoginForm: FC<LoginFormProps> = () => {
   const { addToast } = useToasts();
-  const dispatch = useAppDispatch();
-  const { user, loading, error } = useTypedSelector((state) => state.user);
   const { updateUser } = useContext(AuthContext);
 
   const router = useRouter();
@@ -44,8 +40,6 @@ const LoginForm: FC<LoginFormProps> = () => {
 
   const submitForm = async (values: UserCredentialsParams) => {
     try {
-      //REFACTOR
-      // const res = await dispatch(loginUser(values));
       const login = await useApi.login(values);
       console.log("----------login", login, login === "OK");
 
@@ -53,8 +47,6 @@ const LoginForm: FC<LoginFormProps> = () => {
         addToast("Login Successfully", { appearance: "success" });
 
         const status = await useApi.status();
-
-        console.log("status", status);
 
         updateUser(status);
         router.push(`/profile/${status.id}`);

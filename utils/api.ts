@@ -12,11 +12,11 @@ import {
 } from "./types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const API_URL = `process.env.NEXT_PUBLIC_URL/api`;
+export const API_URL = `${process.env.NEXT_PUBLIC_URL}/api`;
 const config: AxiosRequestConfig = {
   withCredentials: true,
   headers: {
-    "Access-Control-Allow-Origin": "process.env.NEXT_PUBLIC_URL/api",
+    "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_URL}/api`,
     "Content-Type": "application/json",
     Authorization: `Bearer ${getAccessToken()}`,
   },
