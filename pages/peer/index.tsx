@@ -48,13 +48,10 @@ const PeerPage: FC<PeerProps> = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    socket.current = io(
-      /* "http://localhost:3001" */ "https://test-nest-api-production.up.railway.app",
-      {
-        reconnectionAttempts: 3,
-        withCredentials: true,
-      }
-    ).connect();
+    socket.current = io(process.env.NEXT_PUBLIC_URL, {
+      reconnectionAttempts: 3,
+      withCredentials: true,
+    }).connect();
 
     console.log("here0");
 

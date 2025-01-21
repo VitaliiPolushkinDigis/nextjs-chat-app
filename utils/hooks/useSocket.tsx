@@ -8,13 +8,10 @@ export function useSocket() {
 
   useEffect(() => {
     (async function initSocket() {
-      const inst = io(
-        /* "http://localhost:3001" */ "https://test-nest-api-production.up.railway.app",
-        {
-          reconnectionAttempts: 3,
-          withCredentials: true,
-        }
-      );
+      const inst = io(process.env.NEXT_PUBLIC_URL, {
+        reconnectionAttempts: 3,
+        withCredentials: true,
+      });
       setSocket(inst);
     })();
 

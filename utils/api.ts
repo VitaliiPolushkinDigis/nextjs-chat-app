@@ -12,13 +12,11 @@ import {
 } from "./types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const API_URL =
-  /* "http://localhost:3001/api" */ "https://test-nest-api-production.up.railway.app/api"; /* process.env.NEXT_PUBLIC_REACT_APP_API_URL */
+export const API_URL = `process.env.NEXT_PUBLIC_URL/api`;
 const config: AxiosRequestConfig = {
   withCredentials: true,
   headers: {
-    "Access-Control-Allow-Origin":
-      /* "http://localhost:3001/api" */ "https://test-nest-api-production.up.railway.app/api",
+    "Access-Control-Allow-Origin": "process.env.NEXT_PUBLIC_URL/api",
     "Content-Type": "application/json",
     Authorization: `Bearer ${getAccessToken()}`,
   },
