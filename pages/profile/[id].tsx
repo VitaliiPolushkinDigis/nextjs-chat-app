@@ -184,7 +184,7 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
                   </form>
                 )}
 
-                {id && (
+                {id && user?.id && (
                   <div style={{ marginTop: "40px" }}>
                     <h2
                       style={{
