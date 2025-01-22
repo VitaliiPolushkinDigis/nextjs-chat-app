@@ -77,6 +77,7 @@ const Header: FC<HeaderProps> = (props) => {
             pointerEvents: isMenuOpen ? "auto" : "none",
             borderRadius: "16px",
           }}
+          onClick={() => setIsOpenMenu(false)}
         >
           <Link
             style={{ marginRight: "50px", ...linkStyles }}
