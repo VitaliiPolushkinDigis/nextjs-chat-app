@@ -192,7 +192,7 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
                         marginBottom: "16px",
                       }}
                     >
-                      {profile.data?.user.firstName}'s posts:
+                      {profile.data?.user.firstName}&apos;s posts:
                     </h2>
                     <Posts id={parseInt(id as string)} />
                   </div>
