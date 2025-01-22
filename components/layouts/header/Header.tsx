@@ -64,7 +64,7 @@ const Header: FC<HeaderProps> = (props) => {
             position: "absolute",
             top: "50px",
             left: "16px",
-            width: "200px",
+            width: "240px",
             height: "auto",
             backgroundColor: "white",
             border: "1px solid #ccc",
@@ -93,17 +93,17 @@ const Header: FC<HeaderProps> = (props) => {
           <Link style={{ marginRight: "50px", ...linkStyles }} href="/users">
             Users
           </Link>
-          <Link style={{ marginRight: "50px", ...linkStyles }} href="/shop">
+          {/* <Link style={{ marginRight: "50px", ...linkStyles }} href="/shop">
             Shop
-          </Link>
+          </Link> */}
           <Link style={{ marginRight: "50px", ...linkStyles }} href="/peer">
-            Video Chat:(in dev)
+            Video Chat: <span style={{ fontSize: "12px" }}>(in dev)</span>
           </Link>
           <div>
             <button
               disabled={isLoading}
               onClick={handleLoginOut}
-              className="btn submitBtn"
+              className="btn btn-sm"
               style={{
                 textTransform: "capitalize",
                 ...linkStyles,

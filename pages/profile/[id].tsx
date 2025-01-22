@@ -15,20 +15,26 @@ import Page from "../../components/layouts/page/Page";
 import styles from "../../components/Profile/Profile.module.css";
 import { AuthContext } from "@/utils/context/AuthContext";
 import Image from "next/image";
+import { useToasts } from "react-toast-notifications";
+import Loader from "@/components/Loader/Loader";
 
 interface PostsProps {
   id: number;
 }
 
 const Posts: FC<PostsProps> = ({ id }) => {
-  const { data } = useGetProfilePostsQuery(id);
+  const { data, isLoading } = useGetProfilePostsQuery(id);
 
   return (
     <>
-      {data
-        ?.slice()
-        ?.sort((a, b) => (a?.id > b?.id ? -1 : 1))
-        ?.map((p) => <Post key={p.id} p={p} />) || <p>No posts yet</p>}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        data
+          ?.slice()
+          ?.sort((a, b) => (a?.id > b?.id ? -1 : 1))
+          ?.map((p) => <Post key={p.id} p={p} />) || <p>No posts yet</p>
+      )}
     </>
   );
 };
@@ -37,6 +43,7 @@ interface ProfilePageProps {}
 
 const ProfilePage: FC<ProfilePageProps> = ({}) => {
   const dispatch = useAppDispatch();
+  const { addToast } = useToasts();
   const { user } = useContext(AuthContext);
 
   const params = useParams();
@@ -66,9 +73,17 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
         imgUrl:
           values.imgUrl ||
           "https://techcrunch.com/wp-content/uploads/2022/06/instagram-pin-posts.png",
-      }).then(() => {
-        actions.resetForm({});
-      });
+      })
+        .then(
+          () => {
+            addToast("Created!");
+            actions.resetForm({});
+          },
+          (r) => addToast(`Error creating a post ${r}`)
+        )
+        .catch((err) => {
+          addToast(`Not successfull! ${err}`);
+        });
     },
   });
 
@@ -177,7 +192,7 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
                         marginBottom: "16px",
                       }}
                     >
-                      {profile.data?.user.firstName} feed:
+                      {profile.data?.user.firstName}'s posts:
                     </h2>
                     <Posts id={parseInt(id as string)} />
                   </div>

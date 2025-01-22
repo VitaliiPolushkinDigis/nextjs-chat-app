@@ -11,6 +11,7 @@ import styles from "./ConversationSidebar.module.css";
 
 import { Sidebar } from "../sidebar/Sidebar";
 import classes from "../sidebar/Sidebar.module.css";
+import Loader from "../Loader/Loader";
 
 interface ConversationSidebarProps {
   createConversation: any;
@@ -29,7 +30,9 @@ const ConversationSidebar: FC<ConversationSidebarProps> = ({
   const [isCollapsed, setIsCollapsed] = useState<Boolean | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { conversations } = useTypedSelector((state) => state.conversations);
+  const { conversations, loading } = useTypedSelector(
+    (state) => state.conversations
+  );
 
   const getDisplayUser = (conversation: ConversationType) => {
     return conversation.creator.id === user?.id
@@ -115,64 +118,68 @@ const ConversationSidebar: FC<ConversationSidebarProps> = ({
         </div>
       </div>
 
-      {conversations.map((conversation) => (
-        <div
-          style={{
-            ...(selectedConversation?.id === conversation.id
-              ? {
+      {loading ? (
+        <Loader />
+      ) : (
+        conversations.map((conversation) => (
+          <div
+            style={{
+              ...(selectedConversation?.id === conversation.id
+                ? {
+                    backgroundSize: "cover",
+                    backgroundImage:
+                      "url(https://web.telegram.org/a/chat-bg-br.f34cc96fbfb048812820.png)",
+                  }
+                : {}),
+              marginBottom: "8px",
+              borderRadius: "16px",
+              cursor: "pointer",
+            }}
+            key={conversation.id}
+            onClick={() => {
+              setSelectedConversation(conversation);
+              setIsCollapsed(true);
+            }}
+          >
+            <div className={styles.conversations}>
+              <div
+                style={{
+                  borderRadius: "50%",
+                  width: "36px",
+                  height: "36px",
                   backgroundSize: "cover",
                   backgroundImage:
                     "url(https://web.telegram.org/a/chat-bg-br.f34cc96fbfb048812820.png)",
-                }
-              : {}),
-            marginBottom: "8px",
-            borderRadius: "16px",
-            cursor: "pointer",
-          }}
-          key={conversation.id}
-          onClick={() => {
-            setSelectedConversation(conversation);
-            setIsCollapsed(true);
-          }}
-        >
-          <div className={styles.conversations}>
-            <div
-              style={{
-                borderRadius: "50%",
-                width: "36px",
-                height: "36px",
-                backgroundSize: "cover",
-                backgroundImage:
-                  "url(https://web.telegram.org/a/chat-bg-br.f34cc96fbfb048812820.png)",
-                marginRight: "8px",
-              }}
-              data-attr="avatar"
-            ></div>
-            <div>
-              <div
-                style={{
-                  ...(selectedConversation?.id === conversation.id
-                    ? { color: "white", fontWeight: 600 }
-                    : {}),
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2, // Limit to 2 lines
-                  WebkitBoxOrient: "vertical", // Vertical orientation for truncation
-                  overflow: "hidden", // Hide overflow
-                  textOverflow: "ellipsis", // Add ellipsis
+                  marginRight: "8px",
                 }}
-                className={classes.conversationRecepient}
-              >
-                <div className={classes.conversationWriteToText}>
-                  Write to:{" "}
+                data-attr="avatar"
+              ></div>
+              <div>
+                <div
+                  style={{
+                    ...(selectedConversation?.id === conversation.id
+                      ? { color: "white", fontWeight: 600 }
+                      : {}),
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2, // Limit to 2 lines
+                    WebkitBoxOrient: "vertical", // Vertical orientation for truncation
+                    overflow: "hidden", // Hide overflow
+                    textOverflow: "ellipsis", // Add ellipsis
+                  }}
+                  className={classes.conversationRecepient}
+                >
+                  <div className={classes.conversationWriteToText}>
+                    Write to:{" "}
+                  </div>
+                  {`${getDisplayUser(conversation).firstName} ${
+                    getDisplayUser(conversation).lastName
+                  }`}
                 </div>
-                {`${getDisplayUser(conversation).firstName} ${
-                  getDisplayUser(conversation).lastName
-                }`}
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </Sidebar>
   );
 };

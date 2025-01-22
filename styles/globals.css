@@ -27,6 +27,11 @@ a {
   cursor: pointer;
 }
 
+.btn-sm {
+  padding: 8px 0 0;
+  background: white;
+}
+
 .submitBtn {
   background: #378158;
   color: white;

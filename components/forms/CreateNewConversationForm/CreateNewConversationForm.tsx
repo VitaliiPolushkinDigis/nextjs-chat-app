@@ -89,7 +89,7 @@ const CreateNewConversationForm: FC<CreateNewConversationFormProps> = ({
           color="primary"
           style={{ marginTop: "16px" }}
         >
-          Create and send
+          Create new Conversation
         </button>
       </form>
     </div>
