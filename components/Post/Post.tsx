@@ -38,7 +38,6 @@ const PostComponent: FC<PostProps> = ({ p }) => {
           style={{ borderRadius: "12px" }}
           src={p.imgUrl}
           alt="Image description"
-          layout="responsive"
           width={400} // Relative width (for responsiveness)
           height={300} // Relative height (for responsiveness)
         />
