@@ -31,10 +31,6 @@
   border: 1px solid #37815887;
 }
 
-.textField:focus {
-  border: 2px solid #378158;
-}
-
 .textField:focus-visible {
   outline: none;
 }

@@ -23,7 +23,7 @@ const LoginForm: FC<LoginFormProps> = () => {
     enableReinitialize: true,
     validateOnChange: false,
     validateOnBlur: true,
-    validationSchema: validationSchemaLogin,
+    // validationSchema: validationSchemaLogin,
     onSubmit: (values, actions) => {
       submitForm(values);
       /*  actions.resetForm({}); */
@@ -90,6 +90,7 @@ const LoginForm: FC<LoginFormProps> = () => {
             dataAttr="email"
             touched={touched.email}
             disabled={isLoading}
+            type="email"
           />
         </div>
         <div>

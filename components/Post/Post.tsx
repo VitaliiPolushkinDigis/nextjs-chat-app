@@ -39,8 +39,8 @@ const PostComponent: FC<PostProps> = ({ p }) => {
           src={p.imgUrl}
           alt="Image description"
           layout="responsive"
-          width={100} // Relative width (for responsiveness)
-          height={75} // Relative height (for responsiveness)
+          width={400} // Relative width (for responsiveness)
+          height={300} // Relative height (for responsiveness)
         />
       )}
       <p>{p.subtitle}</p>
