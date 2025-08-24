@@ -1,12 +1,14 @@
 import { Button } from "@mui/material";
 import { useFormik } from "formik";
-import { FC, useContext, useEffect } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
 import { useAppDispatch, useTypedSelector } from "@/redux";
 import {
   useCreatePostMutation,
   useGetProfilePostsQuery,
   useLazyGetProfileQuery,
+  useSendDMMutation,
+  useGetInstagramProfilesQuery,
 } from "@/utils/api";
 import { useParams } from "next/navigation";
 import Post from "../../components/Post/Post";
@@ -45,13 +47,30 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
   const dispatch = useAppDispatch();
   const { addToast } = useToasts();
   const { user } = useContext(AuthContext);
+  const [selectedInstagramProfileId, setSelectedInstagramProfileId] = useState<number | null>(null);
 
   const params = useParams();
   const id = params?.id;
 
   const [createPost, resulr] = useCreatePostMutation();
+  const [sendDM, result] = useSendDMMutation();
+  const { data: instagramProfiles } = useGetInstagramProfilesQuery();
 
   const [getProfile, profile] = useLazyGetProfileQuery();
+
+  // Load selected Instagram profile ID from localStorage
+  useEffect(() => {
+    const storedProfileId = localStorage.getItem('selectedInstagramProfileId');
+    if (storedProfileId) {
+      setSelectedInstagramProfileId(Number(storedProfileId));
+    }
+  }, []);
+
+  const handleInstagramProfileSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const profileId = Number(e.target.value);
+    setSelectedInstagramProfileId(profileId);
+    localStorage.setItem('selectedInstagramProfileId', profileId.toString());
+  };
 
   const {
     values,
@@ -77,7 +96,23 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
         .then(
           () => {
             addToast("Created!");
+            
+            // Only send Instagram DM if a profile is selected
+            if (selectedInstagramProfileId) {
+              sendDM({
+                profileId: selectedInstagramProfileId,
+                recipientId: '708149675552701',
+                message: values.title || 'Hello, how are you?',
+              }).then(
+                () => addToast("Instagram DM sent successfully!"),
+                (error) => addToast(`Failed to send Instagram DM: ${error}`)
+              );
+            } else {
+              addToast("No Instagram profile selected - skipping DM");
+            }
+            
             actions.resetForm({});
+            
           },
           (r) => addToast(`Error creating a post ${r}`)
         )
@@ -170,6 +205,48 @@ const ProfilePage: FC<ProfilePageProps> = ({}) => {
                       helperText
                       label="Your Description"
                     />
+                    
+                    {/* Instagram Profile Selection */}
+                    <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+                      <label 
+                        htmlFor="instagramProfile" 
+                        style={{ 
+                          display: "block", 
+                          marginBottom: "8px", 
+                          fontWeight: "500",
+                          color: "#495057"
+                        }}
+                      >
+                        Instagram Profile (for DM):
+                      </label>
+                      <select
+                        id="instagramProfile"
+                        value={selectedInstagramProfileId || ""}
+                        onChange={handleInstagramProfileSelect}
+                        style={{
+                          width: "100%",
+                          padding: "12px 16px",
+                          border: "2px solid #e9ecef",
+                          borderRadius: "8px",
+                          fontSize: "1rem",
+                          backgroundColor: "white",
+                          cursor: "pointer"
+                        }}
+                      >
+                        <option value="">-- Select Instagram Profile --</option>
+                        {instagramProfiles?.map((profile: any) => (
+                          <option key={profile.id} value={profile.id}>
+                            @{profile.username} ({profile.instagramBusinessAccountId})
+                          </option>
+                        ))}
+                      </select>
+                      {!selectedInstagramProfileId && (
+                        <small style={{ color: "#6c757d", fontStyle: "italic" }}>
+                          No profile selected - Instagram DM will be skipped
+                        </small>
+                      )}
+                    </div>
+
                     <Button
                       type="submit"
                       variant="contained"

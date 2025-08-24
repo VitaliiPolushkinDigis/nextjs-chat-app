@@ -7,6 +7,7 @@ import messagesSlice from "./slices/messageSlice";
 import {
   authApi,
   conversationsApi,
+  instagramApi,
   postsApi,
   profilesApi,
   usersApi,
@@ -24,6 +25,7 @@ export function makeStore() {
       [usersApi.reducerPath]: usersApi.reducer,
       [conversationsApi.reducerPath]: conversationsApi.reducer,
       [authApi.reducerPath]: authApi.reducer,
+      [instagramApi.reducerPath]: instagramApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat([
@@ -32,6 +34,7 @@ export function makeStore() {
         usersApi.middleware,
         conversationsApi.middleware,
         authApi.middleware,
+        instagramApi.middleware,
       ]),
   });
 }

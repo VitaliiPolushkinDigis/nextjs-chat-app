@@ -162,6 +162,177 @@ export const useApi = {
   },
 };
 
+// Instagram API endpoints
+export const instagramApi = createApi({
+  reducerPath: 'instagramApi',
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: `${API_URL}/api/instagram`,
+    prepareHeaders: (headers) => {
+      headers.set('Content-Type', 'application/json');
+      return headers;
+    },
+  }),
+  tagTypes: ["Instagram", "InstagramProfiles"],
+  endpoints: (builder) => ({
+    // Profile Management
+    getProfiles: builder.query<any[], void>({
+      query: () => 'profiles',
+      providesTags: ['InstagramProfiles'],
+    }),
+    
+    getProfileByUserId: builder.query<any, number>({
+      query: (userId) => `profiles/user/${userId}`,
+      providesTags: ['InstagramProfiles'],
+    }),
+
+    // Instagram Operations
+    getProfileInfo: builder.query<any, { profileId: number }>({
+      query: ({ profileId }) => `profiles/${profileId}/info`,
+      providesTags: ['Instagram'],
+    }),
+
+    getRecentPosts: builder.query<any, { profileId: number }>({
+      query: ({ profileId }) => `profiles/${profileId}/posts`,
+      providesTags: ['Instagram'],
+    }),
+
+    sendDM: builder.mutation<any, { profileId: number; recipientId: string; message: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/send-dm`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    getConversations: builder.query<any, { profileId: number }>({
+      query: ({ profileId }) => `profiles/${profileId}/conversations`,
+      providesTags: ['Instagram'],
+    }),
+
+    // Profile Management
+    deactivateProfile: builder.mutation<any, { profileId: number }>({
+      query: ({ profileId }) => ({
+        url: `profiles/${profileId}/deactivate`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['InstagramProfiles'],
+    }),
+
+    deleteProfile: builder.mutation<any, { profileId: number }>({
+      query: ({ profileId }) => ({
+        url: `profiles/${profileId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['InstagramProfiles'],
+    }),
+
+    // Legacy endpoints (kept for backward compatibility)
+    getAvailableUserIds: builder.query<any, { profileId: number }>({
+      query: ({ profileId }) => `profiles/${profileId}/available-users`,
+      providesTags: ['Instagram'],
+    }),
+
+    getDirectMessages: builder.query<any, { profileId: number }>({
+      query: ({ profileId }) => `profiles/${profileId}/messages`,
+      providesTags: ['Instagram'],
+    }),
+
+    getRecentComments: builder.query<any, { profileId: number }>({
+      query: ({ profileId }) => `profiles/${profileId}/comments`,
+      providesTags: ['Instagram'],
+    }),
+
+    replyToComment: builder.mutation<any, { profileId: number; commentId: string; message: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/reply-comment`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    getInsights: builder.query<any, { profileId: number }>({
+      query: ({ profileId }) => `profiles/${profileId}/insights`,
+      providesTags: ['Instagram'],
+    }),
+
+    searchUsers: builder.query<any, { profileId: number; query: string }>({
+      query: ({ profileId, query }) => `profiles/${profileId}/search-users?q=${encodeURIComponent(query)}`,
+      providesTags: ['Instagram'],
+    }),
+
+    getUserById: builder.query<any, { profileId: number; userId: string }>({
+      query: ({ profileId, userId }) => `profiles/${profileId}/users/${userId}`,
+      providesTags: ['Instagram'],
+    }),
+
+    // Automation Features
+    handleAutoReply: builder.mutation<any, { profileId: number; commentId: string; reply: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/auto-reply`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    welcomeNewFollower: builder.mutation<any, { profileId: number; userId: string; message: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/welcome-follower`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    sendFollowUp: builder.mutation<any, { profileId: number; userId: string; message: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/follow-up`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    sendHolidayGreeting: builder.mutation<any, { profileId: number; message: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/holiday-greeting`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    sendPromotionalMessage: builder.mutation<any, { profileId: number; message: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/promotional-message`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    handleCustomerService: builder.mutation<any, { profileId: number; userId: string; message: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/customer-service`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+
+    engageWithUser: builder.mutation<any, { profileId: number; userId: string; action: string }>({
+      query: ({ profileId, ...data }) => ({
+        url: `profiles/${profileId}/engage`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Instagram'],
+    }),
+  }),
+});
+
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
@@ -416,6 +587,32 @@ export const {
   useCreatePostMutation,
   useLazyGetProfilePostsQuery,
 } = postsApi;
+
+// Export hooks for all Instagram API endpoints
+export const {
+  useGetProfilesQuery: useGetInstagramProfilesQuery,
+  useGetProfileByUserIdQuery,
+  useGetProfileInfoQuery,
+  useGetRecentPostsQuery,
+  useSendDMMutation,
+  useGetConversationsQuery,
+  useDeactivateProfileMutation,
+  useDeleteProfileMutation,
+  useGetAvailableUserIdsQuery,
+  useGetDirectMessagesQuery,
+  useGetRecentCommentsQuery,
+  useReplyToCommentMutation,
+  useGetInsightsQuery,
+  useSearchUsersQuery,
+  useGetUserByIdQuery,
+  useHandleAutoReplyMutation,
+  useWelcomeNewFollowerMutation,
+  useSendFollowUpMutation,
+  useSendHolidayGreetingMutation,
+  useSendPromotionalMessageMutation,
+  useHandleCustomerServiceMutation,
+  useEngageWithUserMutation,
+} = instagramApi;
 
 export const { usePostConversationMutation } = conversationsApi;
 

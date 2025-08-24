@@ -94,6 +94,9 @@ const Header: FC<HeaderProps> = (props) => {
           <Link style={{ marginRight: "50px", ...linkStyles }} href="/users">
             Users
           </Link>
+          <Link style={{ marginRight: "50px", ...linkStyles }} href="/instagram">
+            📱 Instagram
+          </Link>
           {/* <Link style={{ marginRight: "50px", ...linkStyles }} href="/shop">
             Shop
           </Link> */}
